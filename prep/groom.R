@@ -99,14 +99,14 @@ for(i in 1:length(yearly_in)){
   
   x <- datain[-(1:3) , i]
   x <- x[!is.na(x)]
-  tourism[[i]]$x <- ts(x, start = c(datain[2, i], datain[3, i]), frequency = 1)
+  tourism[[i]]$x <- ts(x, start = datain[2, i], frequency = 1)
   
   xx <- dataoos[-(1:3) , i]
   xx <- xx[!is.na(xx)]
-  tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, i], dataoos[3, i]), frequency = 1)
+  tourism[[i]]$xx <- ts(xx, start = dataoos[2, i], frequency = 1)
   
   tourism[[i]]$h <- dataoos[1 , i]
   tourism[[i]]$n <- datain[i, 1]
 }
 
-# something wrong with the starting years
+save(tourism, file = "pkg/data/tourism.rda")
