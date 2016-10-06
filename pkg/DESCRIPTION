@@ -6,7 +6,7 @@ Description: The 1311 time series from the tourism forecasting competition
     (Hyndman et al. 2011).
 Depends:
     R (>= 3.2.0)
-Import:
+Suggests:
     Mcomp
 License: GPL-3
 Encoding: UTF-8

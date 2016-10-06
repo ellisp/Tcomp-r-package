@@ -127,4 +127,4 @@ for(i in 1:length(tourism)){
 names(tourism) <- all_series
 
 plot(tourism$Y1)
-save(tourism, file = "pkg/data/tourism.rda")
+save(tourism, file = "pkg/data/tourism.rda", compress = "xz")

@@ -23,6 +23,6 @@
 #' @source \url{http://robjhyndman.com/papers/the-tourism-forecasting-competition}
 #' @seealso \code{\link[Mcomp]{subset.Mcomp}}, \code{\link[Mcomp]{plot.Mdata}}
 #' @examples
+#' library(Mcomp) # for plot and print methods
 #' plot(tourism$Y1)
 "tourism"
-#' @importFrom Mcomp plot.Mdata print.Mdata subset.Mcomp
