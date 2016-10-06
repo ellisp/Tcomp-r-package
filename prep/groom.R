@@ -1,8 +1,8 @@
 library(Mcomp)
 
 # tourism should be a list with as many elements as total series in the competition.  Each element
-# of the list should itself be a list with 7 elements resembling this, except no type or description.
-# The examples below are from Mcomp and form the model.
+# of the list should itself be a list with 6 elements resembling this, except no type, description or sn.
+# The examples below are from Mcomp and form the model of the structure of each element of the tourism object.
 # 
 # > str(M3$N0001)
 # List of 9
