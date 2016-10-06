@@ -3,6 +3,7 @@
 \docType{data}
 \name{tourism}
 \alias{tourism}
+\title{Tourism competition data}
 \format{A list of 518 series, of class \code{Mcomp}.  Each series within \code{tourism} is of 
 class \code{Mdata} with the following structure
    \describe{
@@ -26,6 +27,9 @@ values for M3 are "DEMOGRAPHIC", "FINANCE", "INDUSTRY", "MACRO",
 }
 \usage{
 tourism
+}
+\description{
+The data from the 2011 tourism forecasting competition
 }
 \examples{
 plot(tourism$Y1)

@@ -1,5 +1,5 @@
 
-#' @importFrom Mcomp plot.Mdata print.Mdata subset.Mcomp
+
 #'  
 #' Tourism competition data
 #'
@@ -13,13 +13,10 @@
 #' first yearly series, "Q20" denotes 20th quarterly series and so on.}
 #' \item{n}{The number of observations in the time series}
 #' \item{h}{The number of required forecasts}
-#' \item{period}{Interval of the time series. Possible values are "YEARLY", "QUARTERLY",
-#' "MONTHLY" & "OTHER".}
-#' \item{type}{The type of series. Possible values for M1 are "DEMOGR", "INDUST",
-#' "MACRO1", "MACRO2", "MICRO1", "MICRO2" & "MICRO3". Possible
-#' values for M3 are "DEMOGRAPHIC", "FINANCE", "INDUSTRY", "MACRO",
-#' "MICRO", "OTHER".}
-#' \item{description}{A short description of the time series}
+#' \item{period}{Interval of the time series. Possible values are "YEARLY", "QUARTERLY" &
+#' "MONTHLY"}
+#' \item{type}{The type of series. For data in \code{tourism}, this is always "TOURISM".}
+#' \item{description}{"No description available".  Kept for consistency with the M3 and M1 data.}
 #' \item{x}{A time series of length \code{n} (the historical data)}
 #' \item{xx}{A time series of length \code{h} (the future data)}
 #' }
@@ -28,3 +25,4 @@
 #' @examples
 #' plot(tourism$Y1)
 "tourism"
+#' @importFrom Mcomp plot.Mdata print.Mdata subset.Mcomp
