@@ -1,4 +1,5 @@
 library(Mcomp)
+library(stringr)
 
 # tourism should be a list with as many elements as total series in the competition.  Each element
 # of the list should itself be a list with 6 elements resembling this, except no type, description or sn.
@@ -45,6 +46,7 @@ number <- ncol(monthly_in) + ncol(quarterly_in) + ncol(yearly_in)
 tourism <- list()
 all_series <- c(names(monthly_in), names(quarterly_in), names(yearly_in))
 
+all_series <- toupper(all_series)
 
 #--------------monthly data----------------
 for(i in 1:length(monthly_in)){
@@ -68,45 +70,61 @@ for(i in 1:length(monthly_in)){
 }
 
 #--------------quarterly data----------------
-for(i in 1:length(quarterly_in)){
+for(j in 1:length(quarterly_in)){
+  i <- i + 1
   datain <- quarterly_in
   dataoos <- quarterly_oos
   
   tourism[[i]] <- list()
-  tourism[[i]]$st <- names(datain)[i]
+  tourism[[i]]$st <- names(datain)[j]
   tourism[[i]]$period <- "QUARTERLY"
   
-  x <- datain[-(1:3) , i]
+  x <- datain[-(1:3) , j]
   x <- x[!is.na(x)]
-  tourism[[i]]$x <- ts(x, start = c(datain[2, i], datain[3, i]), frequency = 4)
+  tourism[[i]]$x <- ts(x, start = c(datain[2, j], datain[3, j]), frequency = 4)
   
-  xx <- dataoos[-(1:3) , i]
+  xx <- dataoos[-(1:3) , j]
   xx <- xx[!is.na(xx)]
-  tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, i], dataoos[3, i]), frequency = 4)
+  tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, j], dataoos[3, j]), frequency = 4)
   
-  tourism[[i]]$h <- dataoos[1 , i]
-  tourism[[i]]$n <- datain[i, 1]
+  tourism[[i]]$h <- dataoos[1 , j]
+  tourism[[i]]$n <- datain[i, j]
 }
 
 #--------------annual data----------------
-for(i in 1:length(yearly_in)){
+for(j in 1:length(yearly_in)){
+  i <- i + 1
   datain <- yearly_in
   dataoos <- yearly_oos
   
   tourism[[i]] <- list()
-  tourism[[i]]$st <- names(datain)[i]
+  tourism[[i]]$st <- names(datain)[j]
   tourism[[i]]$period <- "YEARLY"
   
-  x <- datain[-(1:3) , i]
+  x <- datain[-(1:3) , j]
   x <- x[!is.na(x)]
-  tourism[[i]]$x <- ts(x, start = datain[2, i], frequency = 1)
+  tourism[[i]]$x <- ts(x, start = datain[2, j], frequency = 1)
   
-  xx <- dataoos[-(1:3) , i]
+  xx <- dataoos[-(1:3) , j]
   xx <- xx[!is.na(xx)]
-  tourism[[i]]$xx <- ts(xx, start = dataoos[2, i], frequency = 1)
+  tourism[[i]]$xx <- ts(xx, start = dataoos[2, j], frequency = 1)
   
-  tourism[[i]]$h <- dataoos[1 , i]
-  tourism[[i]]$n <- datain[i, 1]
+  tourism[[i]]$h <- dataoos[1 , j]
+  tourism[[i]]$n <- datain[j, 1]
 }
 
+
+#-----------give class, names etc-------------
+class(tourism) <- "Mcomp"
+
+for(i in 1:length(tourism)){
+  class(tourism[[i]]) <- "Mdata"
+  tourism[[i]]$sn <- all_series[i]
+  tourism[[i]]$type <- "TOURISM"
+  tourism[[i]]$description <- "No description available"
+}
+
+names(tourism) <- all_series
+
+plot(tourism$Y1)
 save(tourism, file = "pkg/data/tourism.rda")
