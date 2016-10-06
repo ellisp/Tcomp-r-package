@@ -48,19 +48,65 @@ all_series <- c(names(monthly_in), names(quarterly_in), names(yearly_in))
 
 #--------------monthly data----------------
 for(i in 1:length(monthly_in)){
+  datain <- monthly_in
+  dataoos <- monthly_oos
+  
   tourism[[i]] <- list()
-  tourism[[i]]$st <- names(monthly_in)[i]
+  tourism[[i]]$st <- names(datain)[i]
   tourism[[i]]$period <- "MONTHLY"
   
-  x <- monthly_in[-(1:3) , i]
+  x <- datain[-(1:3) , i]
   x <- x[!is.na(x)]
-  tourism[[i]]$x <- ts(x, start = c(monthly_in[2, i], monthly_in[3, i]), frequency = 12)
+  tourism[[i]]$x <- ts(x, start = c(datain[2, i], datain[3, i]), frequency = 12)
   
-  xx <- monthly_oos[-(1:3) , i]
+  xx <- dataoos[-(1:3) , i]
   xx <- xx[!is.na(xx)]
-  tourism[[i]]$xx <- ts(xx, start = c(monthly_oos[2, i], monthly_oos[3, i]), frequency = 12)
+  tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, i], dataoos[3, i]), frequency = 12)
   
-  tourism[[i]]$h <- monthly_oos[1 , i]
-  tourism[[i]]$n <- monthly_in[i, 1]
+  tourism[[i]]$h <- dataoos[1 , i]
+  tourism[[i]]$n <- datain[i, 1]
 }
 
+#--------------quarterly data----------------
+for(i in 1:length(quarterly_in)){
+  datain <- quarterly_in
+  dataoos <- quarterly_oos
+  
+  tourism[[i]] <- list()
+  tourism[[i]]$st <- names(datain)[i]
+  tourism[[i]]$period <- "QUARTERLY"
+  
+  x <- datain[-(1:3) , i]
+  x <- x[!is.na(x)]
+  tourism[[i]]$x <- ts(x, start = c(datain[2, i], datain[3, i]), frequency = 4)
+  
+  xx <- dataoos[-(1:3) , i]
+  xx <- xx[!is.na(xx)]
+  tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, i], dataoos[3, i]), frequency = 4)
+  
+  tourism[[i]]$h <- dataoos[1 , i]
+  tourism[[i]]$n <- datain[i, 1]
+}
+
+#--------------annual data----------------
+for(i in 1:length(yearly_in)){
+  datain <- yearly_in
+  dataoos <- yearly_oos
+  
+  tourism[[i]] <- list()
+  tourism[[i]]$st <- names(datain)[i]
+  tourism[[i]]$period <- "YEARLY"
+  
+  x <- datain[-(1:3) , i]
+  x <- x[!is.na(x)]
+  tourism[[i]]$x <- ts(x, start = c(datain[2, i], datain[3, i]), frequency = 1)
+  
+  xx <- dataoos[-(1:3) , i]
+  xx <- xx[!is.na(xx)]
+  tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, i], dataoos[3, i]), frequency = 1)
+  
+  tourism[[i]]$h <- dataoos[1 , i]
+  tourism[[i]]$n <- datain[i, 1]
+}
+
+# something wrong with the starting years
