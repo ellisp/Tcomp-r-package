@@ -101,7 +101,7 @@ for(j in 1:length(yearly_in)){
   tourism[[i]]$st <- names(datain)[j]
   tourism[[i]]$period <- "YEARLY"
   
-  x <- datain[-(1:3) , j]
+  x <- datain[-(1:2) , j]
   x <- x[!is.na(x)]
   tourism[[i]]$x <- ts(x, start = datain[2, j], frequency = 1)
   

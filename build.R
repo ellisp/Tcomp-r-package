@@ -8,3 +8,4 @@ document("pkg")
 check("pkg")
 
 knit2html("README.Rmd")
+

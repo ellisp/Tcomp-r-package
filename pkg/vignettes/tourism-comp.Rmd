@@ -1,0 +1,95 @@
+---
+title: "Analysis with the 2011 tourism forecasting competition data"
+author: "Peter Ellis"
+date: "October 2016"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Tourism data
+
+This vignette introduces the `Tcomp` R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition of 2011.  Full details on the competition are in Hyndman et al (2011) [full ref], which is available in full from Hyndman's blog.  
+
+The original data are also available from Hyndman's site, in CSV format, and have been wrapped into the `Tcomp` package with his permission.  Any errors that occurred in the wrapping process are the package author's responsibility and if there is doubt, the R version should be checked against the CSV originals.  Please report errors as issues on this packages GitHub page [ref].
+
+## The data
+
+```{r, echo = FALSE, results = 'hide', message = FALSE}
+library(Tcomp)
+library(Mcomp)
+library(knitr)
+opts_chunk$set(comment=NA, fig.width=7, fig.height=4)
+```
+
+The data are all in list called `tourism` which consists of `r length(tourism)` objects.  Tourism is a list of class `Mcomp`, a class inherited from Hyndman et al.'s `Mcomp` package which has the data from the M1 and M3 forecasting competitions [ref needed]
+
+```{r}
+library(Tcomp)
+library(Mcomp) # for the plot and print methods for objects of class Mdata
+length(tourism)
+class(tourism)
+```
+
+Each of the `r length(tourism)` objects in `tourism` is a list of class `Mdata` and it has the same elements as the data in the `Mcomp` package.  The `Mdata` class has its own print method which is a convenient way to see it in summary, shown hear with one of the annual time series:
+
+```{r}
+tourism$Y5
+```
+
+Here is the full structure of each `Mdata` object, again using the fifth yearly series as an example:
+```{r}
+str(tourism$Y5)
+```
+
+
+The `Mcomp` package also provides a convenient plotting method for `Mdata` objects, combining the training and testing periods of the data.  Shown here with one of the monthly time series:
+
+```{r}
+par(bty = "l")
+plot(tourism$M11); grid()
+
+```
+
+
+## Analysis
+
+Even a partial reproduction of the forecasting competition would be too big a task for a vignette.  Blog posts will become available over time that undertake that task.
+
+Here is a taster analysis to hint at how the data could be analysed programmatically.  In the code snippet below, we take the 300th series (which happens to be one of the monthly ones) and forecast it forward 24 more months using three methods:
+
+* ARIMA
+* exponential state space smoothing
+* Theta method
+
+All three models are fit with Hyndman's `forecast` package, which was loaded automatically in this vignette as one of the dependencies of `Mcomp`.
+
+
+```{r, fig.height = 8}
+the_series <- tourism[[300]]
+x <- the_series$x
+xx <- the_series$xx
+h <- the_series$h
+
+fc1 <- forecast(auto.arima(x), h = h)
+fc2 <- forecast(ets(x), h = h)
+fc3 <- thetaf(x, h = h)
+
+par(mfrow = c(3, 1), bty = "l")
+plot(fc1)
+plot(fc2)
+plot(fc3)
+```
+
+It's not effective to assess the relative strength of forecasting methods on a single series but it's all we've got time to for this vignette.  Here's the standard measures of accuracy
+```{r}
+ARIMA <- accuracy(fc1, xx)["Test set", ]
+ETS <- accuracy(fc2, xx)["Test set", ]
+Theta <- accuracy(fc3, xx)["Test set", ]
+round(cbind(ARIMA, ETS, Theta), 2)
+```
+
+For this particular series, taking the Mean Absolute Scaled Error, the ARIMA model slightly performed the ETS, which outperformed the Theta model in turn.
+
