@@ -4,33 +4,6 @@ library(stringr)
 # tourism should be a list with as many elements as total series in the competition.  Each element
 # of the list should itself be a list with 6 elements resembling this, except no type, description or sn.
 # The examples below are from Mcomp and form the model of the structure of each element of the tourism object.
-# 
-# > str(M3$N0001)
-# List of 9
-# $ st         : chr "Y1"
-# $ type       : chr "MICRO"
-# $ period     : chr "YEARLY"
-# $ description: chr "SALES ( CODE= ABT)"
-# $ sn         : chr "N0001"
-# $ x          : Time-Series [1:14] from 1975 to 1988: 941 1085 1245 1445 1683 ...
-# $ xx         : Time-Series [1:6] from 1989 to 1994: 5380 6159 6877 7852 8408 ...
-# $ h          : num 6
-# $ n          : int 14
-# - attr(*, "class")= chr "Mdata"
-
-# > str(M3$N1122)
-# List of 9
-# $ st         : chr "Q477"
-# $ type       : chr "MACRO"
-# $ period     : chr "QUARTERLY"
-# $ description: chr "CANADA-GDP by cost structure"
-# $ sn         : chr "N1122"
-# $ x          : Time-Series [1:44] from 1980 to 1991: 2701 2664 2673 2871 3421 ...
-# $ xx         : Time-Series [1:8] from 1991 to 1993: 7849 8134 8171 8460 8273 ...
-# $ h          : num 8
-# $ n          : int 44
-# - attr(*, "class")= chr "Mdata"
-
 
 #--------------download data----------------
 monthly_in <- read.csv("source-data/monthly_in.csv", stringsAsFactors = FALSE, colClasses = "numeric")
@@ -40,8 +13,17 @@ monthly_oos<- read.csv("source-data/monthly_oos.csv", stringsAsFactors = FALSE, 
 quarterly_oos<- read.csv("source-data/quarterly_oos.csv", stringsAsFactors = FALSE, colClasses = "numeric")
 yearly_oos<- read.csv("source-data/yearly_oos.csv", stringsAsFactors = FALSE, colClasses = "numeric")
 
+# Manual cleaning
+#
+# 1.
 # something very odd about the yearly_in spreadsheet has extra numbers appearing in row 336 for some columns
 # eg column 248, 249, etc.  Hence the limitation to just 50 rows.
+#
+# 2.
+# there appears to be an extra point in series Y18.  See /pkg/tests/testthat/test-object-sizes.R.  
+# So I remove that manually.  
+is.na(yearly_in[20 ,18]) <- TRUE
+
 
 
 #-------------set up objects----------------
@@ -97,8 +79,6 @@ for(j in 1:length(quarterly_in)){
 #--------------annual data----------------
 datain <- yearly_in
 dataoos <- yearly_oos
-
-# there appears to be an extra point in series Y18.  See /pkg/tests/testthat
 
 for(j in 1:length(yearly_in)){
   i <- i + 1
