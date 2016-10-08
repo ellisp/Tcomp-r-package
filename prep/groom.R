@@ -21,8 +21,9 @@ yearly_oos<- read.csv("source-data/yearly_oos.csv", stringsAsFactors = FALSE, co
 #
 # 2.
 # there appears to be an extra point in series Y18.  See /pkg/tests/testthat/test-object-sizes.R.  
-# So I remove that manually.  
-is.na(yearly_in[20 ,18]) <- TRUE
+# Y18 goes up to 2003 in the "yearly_in" data, but 2003 is given as the starting point in "yearly_oos".
+# To get around this I manually change the starting date of the oos set to 2004.
+yearly_oos[2 ,18] <- 2004
 
 
 

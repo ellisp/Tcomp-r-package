@@ -16,8 +16,9 @@ expect_equal(length(subset(tourism, "yearly")), 518)
 #----------test the test period of each series is immediately after the training period------------
 
 # Series Y18 (#811) fails this test as the final point of the training series is 2003, and
-# the first point of the test series is also 2003! To let the package build, this has been
-# knocked out manually in /prep/groom.R.
+# the first point of the test series is also 2003! To let the package build, the starting date
+# of Y18 has been manually changed to 2004 in /prep/groom.R; this seems the most likely
+# problem.
 test_cont <- function(series){
   # series <- tourism[[1041]] # for debugging and dev  
   x <- series$x
