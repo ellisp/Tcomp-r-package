@@ -35,10 +35,13 @@ library(stringr)
 #--------------download data----------------
 monthly_in <- read.csv("source-data/monthly_in.csv", stringsAsFactors = FALSE, colClasses = "numeric")
 quarterly_in <- read.csv("source-data/quarterly_in.csv", stringsAsFactors = FALSE, colClasses = "numeric")
-yearly_in <- read.csv("source-data/yearly_in.csv", stringsAsFactors = FALSE, colClasses = "numeric")
+yearly_in <- read.csv("source-data/yearly_in.csv", stringsAsFactors = FALSE, colClasses = "numeric", nrows = 50)
 monthly_oos<- read.csv("source-data/monthly_oos.csv", stringsAsFactors = FALSE, colClasses = "numeric")
 quarterly_oos<- read.csv("source-data/quarterly_oos.csv", stringsAsFactors = FALSE, colClasses = "numeric")
 yearly_oos<- read.csv("source-data/yearly_oos.csv", stringsAsFactors = FALSE, colClasses = "numeric")
+
+# something very odd about the yearly_in spreadsheet has extra numbers appearing in row 336 for some columns
+# eg column 248, 249, etc.  Hence the limitation to just 50 rows.
 
 
 #-------------set up objects----------------
@@ -92,10 +95,11 @@ for(j in 1:length(quarterly_in)){
 }
 
 #--------------annual data----------------
+datain <- yearly_in
+dataoos <- yearly_oos
+
 for(j in 1:length(yearly_in)){
   i <- i + 1
-  datain <- yearly_in
-  dataoos <- yearly_oos
   
   tourism[[i]] <- list()
   tourism[[i]]$st <- names(datain)[j]
@@ -126,5 +130,4 @@ for(i in 1:length(tourism)){
 
 names(tourism) <- all_series
 
-plot(tourism$Y1)
 save(tourism, file = "pkg/data/tourism.rda", compress = "xz")
