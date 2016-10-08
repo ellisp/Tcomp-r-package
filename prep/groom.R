@@ -98,6 +98,8 @@ for(j in 1:length(quarterly_in)){
 datain <- yearly_in
 dataoos <- yearly_oos
 
+# there appears to be an extra point in series Y18.  See /pkg/tests/testthat
+
 for(j in 1:length(yearly_in)){
   i <- i + 1
   

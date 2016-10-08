@@ -28,9 +28,11 @@ test_cont <- function(series){
   )
 } 
 
+lapply(tourism, test_cont)
 
-for(i in 1:length(tourism)){
-  test_cont(tourism[[i]])
-}
+# for loop below was for tracking exactly which series was wrong.
+# for(i in 1:length(tourism)){
+#   test_cont(tourism[[i]])
+# }
 
 
