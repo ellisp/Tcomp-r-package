@@ -13,3 +13,5 @@ test("pkg")
 
 knit2html("README.Rmd")
 
+build("pkg")
+
