@@ -7,7 +7,9 @@ source("prep/groom.R")
 document("pkg")
 check("pkg")
 
-source("pkg/tests/testthat.R")
+
+test("pkg")
+
 
 knit2html("README.Rmd")
 
