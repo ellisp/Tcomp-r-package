@@ -6,6 +6,11 @@ This project provides an R package of convenient access to the data from the tou
 
 Currently this package is only available on GitHub:
 
+```{r echo = FALSE}
+opts_chunk$set(comment=NA, fig.width=9)
+```
+
+
 ```{r eval = FALSE}
 devtools::install_github("ellisp/Tcomp-r-package/pkg")
 ```
