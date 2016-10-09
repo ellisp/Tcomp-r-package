@@ -1,3 +1,4 @@
+library(Tcomp)
 library(dplyr)
 library(tidyr)
 library(parallel)
@@ -10,6 +11,7 @@ accuracy_measures <- function(dataobj, cond1, tests){
   
   clusterEvalQ(cluster, {
     library(Tcomp)
+    library(Mcomp) # for subset.Mdata
     library(forecast)
   })
   
