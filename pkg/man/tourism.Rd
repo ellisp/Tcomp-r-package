@@ -4,7 +4,7 @@
 \name{tourism}
 \alias{tourism}
 \title{Tourism competition data}
-\format{A list of 518 series, of class \code{Mcomp}.  Each series within \code{tourism} is of 
+\format{A list of 1311 series, of class \code{Mcomp}.  Each series within \code{tourism} is of 
 class \code{Mdata} with the following structure
    \describe{
 \item{sn}{Name of the series}
@@ -26,7 +26,7 @@ first yearly series, "Q20" denotes 20th quarterly series and so on.}
 tourism
 }
 \description{
-The data from the 2011 tourism forecasting competition
+The data from the tourism forecasting competition described in Athanasopoulos et al (2011)
 }
 \examples{
 library(Mcomp) # for plot and print methods

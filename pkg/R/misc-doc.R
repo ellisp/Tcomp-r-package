@@ -3,9 +3,9 @@
 #'  
 #' Tourism competition data
 #'
-#' The data from the 2011 tourism forecasting competition
+#' The data from the tourism forecasting competition described in Athanasopoulos et al (2011)
 #' 
-#' @format A list of 518 series, of class \code{Mcomp}.  Each series within \code{tourism} is of 
+#' @format A list of 1311 series, of class \code{Mcomp}.  Each series within \code{tourism} is of 
 #' class \code{Mdata} with the following structure
 #'    \describe{
 #' \item{sn}{Name of the series}
