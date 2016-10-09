@@ -15,7 +15,7 @@
 #' @param ... other parameters to pass to \code{plot.forecast()}
 #' @examples
 #' forecast_comp(tourism$Y18, test = list(1, 2, 3, 4, 1:2, 1:4), plot = TRUE)
-#' forecast_comp(tourism$Q4, test = list(1, 2, 3, 4, 5, 6, 7, 8, 1:4, 1:8), plot = TRUE)
+#' forecast_comp(tourism$Q4, test = list(1, 2, 3, 4, 5, 6, 7, 8, 1:4, 1:8), plot = FALSE)
 forecast_comp <- function(the_series, tests = list(the_series$h), plot = FALSE, ...){
   # the_series <- tourism[[800]] # for dev
   x <- the_series$x   # training set
@@ -46,7 +46,7 @@ forecast_comp <- function(the_series, tests = list(the_series$h), plot = FALSE, 
       forecast::accuracy(fc4, xx, test = this_test)["Test set", "MASE"]
     )
   }
-  colnames(MASEs) <- as.character(tests)
+  colnames(MASEs) <- gsub(":", "-" , as.character(tests))
   rownames(MASEs) <- c("ARIMA", "ETS", "Theta", "Naive")
   
   return(MASEs)
