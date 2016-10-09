@@ -1,10 +1,10 @@
 
 
 
-#' Baseline forecasts of a competition dataset
+#' Four standard forecasts of a competition dataset
 #' 
 #' Applies four modelling strategies (ARIMA, ETS, Theta and naive or seasonally naive) to a dataset
-#' with class Mdata, returns MASE statistics and (optionall) a summary graphic
+#' with class Mdata, returns MASE statistics and (optionally) a summary graphic
 #' 
 #' @export
 #' @import forecast
@@ -13,6 +13,11 @@
 #' @param tests a list of the forecast horizons over which to return the MASE, passed to \code{accuracy}
 #' @param plot whether or not to draw basic plot of the four forecast model
 #' @param ... other parameters to pass to \code{plot.forecast()}
+#' @return a data frame of 4 rows and \code{length(tests) + 1} columns with first column as method and each other column containing the 
+#' Mean Absolute Scaled Error at the horizon indicated by the column name
+#' @details this is just a convenience function for fitting four different standard time series forecasts to an object from an 
+#' M competition or the tourism competition.  Mainly of interest to analysis wishing to re-produce published results or create 
+#' a benchmark against which other methods can be compared.
 #' @examples
 #' forecast_comp(tourism$Y18, test = list(1, 2, 3, 4, 1:2, 1:4), plot = TRUE)
 #' forecast_comp(tourism$Q4, test = list(1, 2, 3, 4, 5, 6, 7, 8, 1:4, 1:8), plot = FALSE)

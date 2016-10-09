@@ -3,7 +3,18 @@ library(dplyr)
 library(tidyr)
 library(parallel)
 
+# this function runs the four standard models in forecast_comp, which is part of the package proper,
+# on a large chunk of the competition series from either Mcomp or Tcomp.  The aim is to help
+# comparisons with Athanasopoulos et al.  I'll probably leave this out of the package proper
+# because it's not really a good idea to add dependencies to unnecessary things like
+# parallel, dplyr, tidyr, etc., so will keep this as an example of how it can be used.
+# The use of makePSOCKcluster and parLapply speeds up the analysis nearly four fold on my laptop
+# eg running the test on all the yearly tourism series takes 12 seconds rather than 44 seconds.
 
+
+#' @param dataobj a list of class Mcomp such as M3 or tourism
+#' @param cond1 a condition for subsetting dataobj eg "yearly"
+#' @param tests a list of different horizons at which to return the MASE for four different models
 accuracy_measures <- function(dataobj, cond1, tests){
   cores <- detectCores()
   
