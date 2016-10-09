@@ -27,17 +27,18 @@ forecast_comp <- function(the_series, tests = list(the_series$h), plot = FALSE, 
   xx <- the_series$xx # test set
   h <- the_series$h
   
-  mod1 <- auto.arima(x)
+  mod1 <- forecast::auto.arima(x)
   fc1 <- forecast::forecast(mod1, h = h)
   fc2 <- forecast::forecast(forecast::ets(x), h = h)
   fc3 <- forecast::thetaf(x, h = h)
   fc4 <- forecast::snaive(x, h = h)
   if(plot){
     par(mfrow = c(2, 2), bty = "l", ...)
-    plot(fc1, ylab = the_series$st)
-    plot(fc2, ylab = the_series$st)  
-    plot(fc3, ylab = the_series$st)  
-    plot(fc4, ylab = the_series$st)
+    plot(fc1, ylab = the_series$st); lines(xx, col = "red")
+    plot(fc2, ylab = the_series$st); lines(xx, col = "red")  
+    plot(fc3, ylab = the_series$st);lines(xx, col = "red")  
+    plot(fc4, ylab = the_series$st);lines(xx, col = "red")
+    
   }
   
   MASEs <- matrix(0, nrow = 4, ncol = length(tests))
