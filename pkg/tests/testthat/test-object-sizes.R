@@ -1,4 +1,4 @@
-
+# tests object sizes and lengths
 
 library(Tcomp)
 library(Mcomp)
@@ -37,3 +37,9 @@ lapply(tourism, test_cont)
 # }
 
 
+#-----------test forecast horizon matches test set--------------
+test_h <- function(series){
+  expect_equal(length(series$xx), series$h)
+}
+
+lapply(tourism, test_h)
