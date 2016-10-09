@@ -92,7 +92,7 @@ for(j in 1:length(yearly_in)){
   x <- x[!is.na(x)]
   tourism[[i]]$x <- ts(x, start = datain[2, j], frequency = 1)
   
-  xx <- dataoos[-(1:3) , j]
+  xx <- dataoos[-(1:2) , j]
   xx <- xx[!is.na(xx)]
   tourism[[i]]$xx <- ts(xx, start = dataoos[2, j], frequency = 1)
   

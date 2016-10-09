@@ -1,11 +1,13 @@
 Package: Tcomp
 Title: Data from the 2011 Tourism Forecasting Competition
-Version: 0.0.2
+Version: 0.0.2.9000
 Authors@R: person("Peter", "Ellis", email = "peter.ellis2013nz@gmail.com", role = c("aut", "cre"))
 Description: The 1311 time series from the tourism forecasting competition
     (Hyndman et al. 2011).
 Depends:
-    R (>= 3.2.0)
+    R (>= 3.2.0),
+Imports:
+    forecast,
 Suggests:
     Mcomp,
     knitr,
