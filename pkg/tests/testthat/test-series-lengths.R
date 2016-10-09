@@ -1,17 +1,21 @@
 library(Tcomp)
 library(Mcomp)
+library(testthat)
 
 #----------test series length versus in the Hyndman article----------
-lengthsm <- sapply(subset(tourism, "monthly"), function(s){length(s$x)})
-lengthsq <- sapply(subset(tourism, "quarterly"), function(s){length(s$x)})
-lengthsy <- sapply(subset(tourism, "yearly"), function(s){length(s$x)})
+lengthsm <- sapply(subset(tourism, "monthly"), function(s){length(s$x) + length(s$xx)})
+lengthsq <- sapply(subset(tourism, "quarterly"), function(s){length(s$x) + length(s$xx)})
+lengthsy <- sapply(subset(tourism, "yearly"), function(s){length(s$x) + length(s$xx)})
 
 
-# These tests all fail
+# These tests all fail unless the means are truncated (ie rounded down).
+# That is, the actual lengths are all slightly longer (on average <1)
+# than the reported lengths:
 expect_equal(mean(lengthsm), 298)
 expect_equal(mean(lengthsq), 99)
 expect_equal(mean(lengthsy), 24)
 
+# These ones pass:
 expect_equal(median(lengthsm), 330)
 expect_equal(median(lengthsq), 110)
 expect_equal(median(lengthsy), 27)

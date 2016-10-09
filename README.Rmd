@@ -46,21 +46,11 @@ lengthsm <- sapply(subset(tourism, "monthly"), function(s){length(s$x)})
 lengthsq <- sapply(subset(tourism, "quarterly"), function(s){length(s$x)})
 lengthsy <- sapply(subset(tourism, "yearly"), function(s){length(s$x)})
 
-# The tests based on the intended equalities below all fail
+# These tests all fail unless the means are truncated (ie rounded down).
+# That is, the actual lengths are all slightly longer (on average <1)
+# than the reported lengths:
 c(mean(lengthsm), 298)
 c(mean(lengthsq), 99)
 c(mean(lengthsy), 24)
-
-c(median(lengthsm), 330)
-c(median(lengthsq), 110)
-c(median(lengthsy), 27)
-
-c(min(lengthsm), 91)
-c(min(lengthsq), 30)
-c(min(lengthsy), 11)
-
-c(max(lengthsm), 333)
-c(max(lengthsq), 130)
-c(max(lengthsy), 47)
 ```
 
