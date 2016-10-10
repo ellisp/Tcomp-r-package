@@ -2,4 +2,5 @@
 
 export(forecast_comp)
 import(forecast)
+importFrom(graphics,lines)
 importFrom(graphics,par)
