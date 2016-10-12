@@ -31,7 +31,10 @@ accuracy_measures <- function(dataobj, cond1, tests){
                        forecast_comp, 
                        tests = tests)
   
-  results_mat <- do.call(rbind, results)
+  extr <- function(x){
+    rbind(x[[1]])
+  }
+  results_ <- do.call(extr, results)
   
   tmp <- as.data.frame(results_mat) %>%
     mutate(method = rownames(results_mat)) %>%

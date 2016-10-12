@@ -6,6 +6,8 @@ source("prep/groom.R")
 
 document("pkg")
 test("pkg")
+;# note - passsing tests depends on truncating the mean length of
+#        the groups of series.  Confirmed by hand check in Excel.
 
 check("pkg")
 

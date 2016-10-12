@@ -38,15 +38,11 @@ A wrapper function `forecast_comp` is provided that fits four models from the `f
 round(forecast_comp(tourism$M4, tests = list(1, 6, 12, 24, 1:12, 1:24), plot = TRUE), 2)
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+```
+Error in forecast_comp(tourism$M4, tests = list(1, 6, 12, 24, 1:12, 1:24), : object 'MAPE' not found
+```
 
-```
-         1    6   12   24 1-12 1-24
-ARIMA 0.01 1.04 2.47 3.40 1.58 2.00
-ETS   0.57 1.41 1.06 2.40 0.86 1.04
-Theta 0.16 0.13 0.91 2.10 0.61 0.92
-Naive 3.23 0.16 1.04 2.38 1.34 1.84
-```
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
 
 This method will also work with the data from the `Mcomp` package:
 
@@ -57,11 +53,7 @@ round(forecast_comp(M3[[2000]], tests = list(1, 3, 6, 1:6), plot = FALSE), 2)
 ```
 
 ```
-         1    3    6  1-6
-ARIMA 0.19 0.53 0.09 0.29
-ETS   0.19 0.95 0.27 0.51
-Theta 0.19 0.95 0.28 0.51
-Naive 0.93 0.78 0.25 0.68
+Error in forecast_comp(M3[[2000]], tests = list(1, 3, 6, 1:6), plot = FALSE): object 'MAPE' not found
 ```
 
 An extended example in `/r/extended-example/reproduce.R` aims to show how this can be used efficiently to reproduce some of the results in Athanasopoulos but currently fails to come up with the same results.

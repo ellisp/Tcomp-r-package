@@ -10,10 +10,12 @@ lengthsy <- sapply(subset(tourism, "yearly"), function(s){length(s$x) + length(s
 
 # These tests all fail unless the means are truncated (ie rounded down).
 # That is, the actual lengths are all slightly longer (on average <1)
-# than the reported lengths:
-expect_equal(mean(lengthsm), 298)
-expect_equal(mean(lengthsq), 99)
-expect_equal(mean(lengthsy), 24)
+# than the reported lengths.  
+# Numbers on right of # are hand observed in Excel, which match
+# lengthsm, lenghtsq and lengthsy
+expect_equal(trunc(mean(lengthsm)), 298) # (100496  + 8784) / 366
+expect_equal(trunc(mean(lengthsq)), 99)  # (39128 + 3416) / 427
+expect_equal(trunc(mean(lengthsy)), 24)  # (10606 + 2072) / 518
 
 # These ones pass:
 expect_equal(median(lengthsm), 330)

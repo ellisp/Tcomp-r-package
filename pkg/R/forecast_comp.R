@@ -31,7 +31,12 @@ forecast_comp <- function(the_series, tests = list(the_series$h), plot = FALSE, 
   fc1 <- forecast::forecast(mod1, h = h)
   fc2 <- forecast::forecast(forecast::ets(x), h = h)
   fc3 <- forecast::thetaf(x, h = h)
-  fc4 <- forecast::snaive(x, h = h)
+  if(stats::frequency(x) > 1){
+    fc4 <- forecast::snaive(x, h = h)  
+  } else {
+    fc4 <- forecast::naive(x, h = h)
+  }
+  
   if(plot){
     par(mfrow = c(2, 2), bty = "l", ...)
     plot(fc1, ylab = the_series$st); lines(xx, col = "red")
@@ -52,10 +57,26 @@ forecast_comp <- function(the_series, tests = list(the_series$h), plot = FALSE, 
       forecast::accuracy(fc4, xx, test = this_test)["Test set", "MASE"]
     )
   }
-  colnames(MASEs) <- gsub(":", "-" , as.character(tests))
-  rownames(MASEs) <- c("ARIMA", "ETS", "Theta", "Naive")
   
-  return(MASEs)
+  # Now repeat for MAPEs.
+  # this is a bit computationally inefficient, but accuracy() is a really
+  # small part of the resource cost, and it's more readable like this.
+  MAPEs <- matrix(0, nrow = 4, ncol = length(tests))
+  for(j in 1:length(tests)){
+    this_test <- tests[[j]]
+    
+    MAPEs[ , j] <- c(
+      forecast::accuracy(fc1, xx, test = this_test)["Test set", "MAPE"],
+      forecast::accuracy(fc2, xx, test = this_test)["Test set", "MAPE"],
+      forecast::accuracy(fc3, xx, test = this_test)["Test set", "MAPE"],
+      forecast::accuracy(fc4, xx, test = this_test)["Test set", "MAPE"]
+    )
+  }
+  
+  colnames(MAPEs) <- colnames(MASEs) <- gsub(":", "-" , as.character(tests))
+  rownames(MAPEs) <- rownames(MAPEs) <- c("ARIMA", "ETS", "Theta", "Naive")
+  
+  return(list(MAPEs, MASEs))
 }
 
 
