@@ -15,6 +15,8 @@ library(parallel)
 #' @param dataobj a list of class Mcomp such as M3 or tourism
 #' @param cond1 a condition for subsetting dataobj eg "yearly"
 #' @param tests a list of different horizons at which to return the MASE for four different models
+#' 
+#' @return a data.frame with \code{length(tests) + 2} columns and 8 rows
 accuracy_measures <- function(dataobj, cond1, tests){
   cores <- detectCores()
   
@@ -31,19 +33,19 @@ accuracy_measures <- function(dataobj, cond1, tests){
                        forecast_comp, 
                        tests = tests)
   
-  extr <- function(x){
-    rbind(x[[1]])
-  }
-  results_ <- do.call(extr, results)
+  results_mat <- do.call(rbind, results)
+  nr <- nrow(results_mat)
   
   tmp <- as.data.frame(results_mat) %>%
+    mutate(measure = rep(rep(c("MAPE", "MASE"), times = c(4, 4)), times = nr / 8)) %>%
     mutate(method = rownames(results_mat)) %>%
-    gather(horizon, mase, -method) %>%
-    group_by(method, horizon) %>%
-    summarise(mase = round(mean(mase), 2)) %>%
+    gather(horizon, mase, -method, -measure) %>%
+    group_by(method, measure, horizon) %>%
+    summarise(result = round(mean(mase), 2)) %>%
     ungroup() %>%
     mutate(horizon = factor(horizon, levels = colnames(results[[1]]))) %>%
-    spread(horizon, mase) %>%
+    spread(horizon, result) %>%
+    arrange(measure) %>%
     as.data.frame()
 
   stopCluster(cluster)
@@ -51,8 +53,13 @@ accuracy_measures <- function(dataobj, cond1, tests){
   return(tmp)
 }
   
-accuracy_measures(tourism, "yearly", list(1, 2, 3, 4, 1:2, 1:4))
-accuracy_measures(tourism, "quarterly", list(1, 2, 3, 4, 6, 8, 1:4, 1:8))
-accuracy_measures(tourism, "monthly", list(1, 2, 3, 6, 12, 18, 24, 1:3, 1:12, 1:24))
+amy <- accuracy_measures(tourism, "yearly", list(1, 2, 3, 4, 1:2, 1:4))
+amq <- accuracy_measures(tourism, "quarterly", list(1, 2, 3, 4, 6, 8, 1:4, 1:8))
+amm <- accuracy_measures(tourism, "monthly", list(1, 2, 3, 6, 12, 18, 24, 1:3, 1:12, 1:24))
+Tcomp_reproduction <- list(yearly = amy, quarterly = amq, monthly = amm)
+
+save(Tcomp_reproduction, file = "pkg/data/Tcomp_reproduction.rda")
 
 accuracy_measures(M3, "yearly", list(1, 2, 3, 4, 1:2, 1:4))
+
+

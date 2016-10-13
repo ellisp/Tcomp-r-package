@@ -76,7 +76,7 @@ forecast_comp <- function(the_series, tests = list(the_series$h), plot = FALSE, 
   colnames(MAPEs) <- colnames(MASEs) <- gsub(":", "-" , as.character(tests))
   rownames(MAPEs) <- rownames(MASEs) <- c("ARIMA", "ETS", "Theta", "Naive")
   
-  return(list(MAPEs, MASEs))
+  return(rbind(MAPEs, MASEs))
 }
 
 

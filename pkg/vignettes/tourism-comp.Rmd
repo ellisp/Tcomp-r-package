@@ -11,9 +11,9 @@ vignette: >
 
 ## Tourism data
 
-This vignette introduces the `Tcomp` R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition of 2011.  Full details on the competition are in Hyndman et al (2011) [full ref], which is available in full from Hyndman's blog.  
+This vignette introduces the `Tcomp` R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition of 2011.  Full details on the competition are in [Athanasopoulos et al (2011)](http://robjhyndman.com/papers/forecompijf.pdf), originally in the International Journal of Forecasting (2011) **27**(3), 822-844, available in full from Hyndman's blog.  
 
-The original data are also available from Hyndman's site, in CSV format, and have been wrapped into the `Tcomp` package with his permission.  Any errors that occurred in the wrapping process are the package author's responsibility and if there is doubt, the R version should be checked against the CSV originals.  Please report errors as issues on this packages GitHub page [ref].
+The original data are also available from [Hyndman's site](http://robjhyndman.com/data/27-3-Athanasopoulos1.zip), in CSV format, and have been wrapped into the `Tcomp` package with his permission.  Any errors that occurred in the wrapping process are the package author's responsibility and if there is doubt, the R version should be checked against the CSV originals. However, testing has been pretty thorough, and further down in this vignette we successfully reproduce exactly the mean absolute percentage error of the naive forecasts that are *inter alia* reported in that 2011 article.  Please report errors as issues on [this package's GitHub page](https://github.com/ellisp/Tcomp-r-package/issues).
 
 ## The data
 
@@ -24,11 +24,9 @@ library(knitr)
 opts_chunk$set(comment=NA, fig.width=7, fig.height=4)
 ```
 
-The data are all in list called `tourism` which consists of `r length(tourism)` objects.  Tourism is a list of class `Mcomp`, a class inherited from Hyndman et al.'s `Mcomp` package which has the data from the M1 and M3 forecasting competitions [ref needed]
+The data are all in a lazy-loaded list called `tourism` which consists of `r length(tourism)` objects.  Tourism is a list of class `Mcomp`, a class inherited from Hyndman et al.'s `Mcomp` package which has the data from the M1 and M3 forecasting competitions [ref needed]
 
 ```{r}
-library(Tcomp)
-library(Mcomp) # for the plot and print methods for objects of class Mdata
 length(tourism)
 class(tourism)
 ```
@@ -56,40 +54,103 @@ plot(tourism$M11); grid()
 
 ## Analysis
 
-Even a partial reproduction of the forecasting competition would be too big a task for a vignette.  Blog posts will become available over time that undertake that task.
+The `Tcomp` package provides `forecast_comp()`, a wrapper around functions from Hyndman's `forecast` package which performs forecasts based on:
 
-Here is a taster analysis to hint at how the data could be analysed programmatically.  In the code snippet below, we take the 300th series (which happens to be one of the monthly ones) and forecast it forward 24 more months using three methods:
-
-* ARIMA
 * exponential state space smoothing
-* Theta method
+* ARIMA
+* theta
+* naive or seasonal naive
 
-All three models are fit with Hyndman's `forecast` package, which was loaded automatically in this vignette as one of the dependencies of `Mcomp`.
+methods and returns mean absolute percentage error (MAPE) and mean absolute scaled error (MASE) for the forecasts compared to the test set, at given testing horizons
 
+```{r, \\}
+forecast_comp(tourism[[300]], tests = list(6, 12, 24))
+```
 
+The first four rows are MAPE and the last four are MASE; note that this is not possible to tell from the output without knowing in advance.
+
+For this particular series (which is a monthly one), taking the MASE (which I think is the better measure), only the ARIMA model out-performed the seasonal naive model (which is forecasts values as being the samne as the most recent observed value for that month).
+
+`forecast_comp()` comes with an optional plot function which compares the four forecasting methods to actuals:
 ```{r, fig.height = 8}
-the_series <- tourism[[300]]
-x <- the_series$x
-xx <- the_series$xx
-h <- the_series$h
-
-fc1 <- forecast(auto.arima(x), h = h)
-fc2 <- forecast(ets(x), h = h)
-fc3 <- thetaf(x, h = h)
-
-par(mfrow = c(3, 1), bty = "l")
-plot(fc1)
-plot(fc2)
-plot(fc3)
+forecast_comp(tourism[[1000]], tests = list(1,2,3,4), plot = TRUE)
 ```
 
-It's not effective to assess the relative strength of forecasting methods on a single series but it's all we've got time to for this vignette.  Here's the standard measures of accuracy
+In this case, we see that actual growth exceeded the 80% prediction interval for each method (but not always the 95% prediction interval).
+
+## Reproducing some of the competition results
+
+`forecast_comp()` is designed to be used in a larger scale than one series at a time.  Here is a more extended use, aimed at re-creating some of the results reported in Athanasoupolus et al.  
+
+```{r eval = FALSE}
+library(Tcomp)
+library(dplyr)
+library(tidyr)
+library(parallel)
+
+# this function runs the four standard models in forecast_comp
+# on a large chunk of the competition series from either Mcomp or Tcomp.  
+# The aim is to help comparisons with Athanasopoulos et al.  
+#
+# The use of makePSOCKcluster and parLapply speeds up the analysis nearly four fold on my laptop
+# eg running the test on all the yearly tourism series takes 12 seconds rather than 44 seconds.
+
+#' @param dataobj a list of class Mcomp such as M3 or tourism
+#' @param cond1 a condition for subsetting dataobj eg "yearly"
+#' @param tests a list of different horizons at which to return the MASE for four different models
+#' 
+#' @return a data.frame with \code{length(tests) + 2} columns and 8 rows
+accuracy_measures <- function(dataobj, cond1, tests){
+  cores <- detectCores()
+  
+  cluster <- makePSOCKcluster(max(1, cores - 1))
+  
+  clusterEvalQ(cluster, {
+    library(Tcomp)
+    library(Mcomp) # for subset.Mdata
+    library(forecast)
+  })
+  
+  results <- parLapply(cluster,
+                       subset(dataobj, cond1), 
+                       forecast_comp, 
+                       tests = tests)
+  
+  results_mat <- do.call(rbind, results)
+  nr <- nrow(results_mat)
+  
+  tmp <- as.data.frame(results_mat) %>%
+    mutate(measure = rep(rep(c("MAPE", "MASE"), times = c(4, 4)), times = nr / 8)) %>%
+    mutate(method = rownames(results_mat)) %>%
+    gather(horizon, mase, -method, -measure) %>%
+    group_by(method, measure, horizon) %>%
+    summarise(result = round(mean(mase), 2)) %>%
+    ungroup() %>%
+    mutate(horizon = factor(horizon, levels = colnames(results[[1]]))) %>%
+    spread(horizon, result) %>%
+    arrange(measure) %>%
+    as.data.frame()
+
+  stopCluster(cluster)
+  
+  return(tmp)
+}
+  
+accuracy_measures(tourism, "monthly", list(1, 2, 3, 6, 12, 18, 24, 1:3, 1:12, 1:24))
+accuracy_measures(tourism, "quarterly", list(1, 2, 3, 4, 6, 8, 1:4, 1:8))
+accuracy_measures(tourism, "yearly", list(1, 2, 3, 4, 1:2, 1:4))
+
+
+```
+The code above isn't run in the build of the vignette for reasons of time (takes a few minutes to run on my laptop, making it to intensive for a CRAN build).  The results are available in the package however as a list called `Tcomp_reproduction`
+
+
 ```{r}
-ARIMA <- accuracy(fc1, xx)["Test set", ]
-ETS <- accuracy(fc2, xx)["Test set", ]
-Theta <- accuracy(fc3, xx)["Test set", ]
-round(cbind(ARIMA, ETS, Theta), 2)
+Tcomp_reproduction$monthly
+Tcomp_reproduction$quarterly
+Tcomp_reproduction$yearly
 ```
 
-For this particular series, taking the Mean Absolute Scaled Error, the ARIMA model slightly performed the ETS, which outperformed the Theta model in turn.
+Comparing the results above to Tables 4, 5 and 6 in [Athanasopoulos et al.](http://robjhyndman.com/papers/forecompijf.pdf) we get exact matches for the mean absolute percentage error (MAPE) of the Naive forecasts, but not for any other rows.  It is expected that the methods for ARIMA, ETS and Theta forecasts in the current forecast package differ slightly from the methods used in the 2011 article.  However, I don't have an explanation for why the mean absolute scaled error estimates above for the naive forecasts don't match those in the 2011 article.  The numbers I obtain are slightly highter than the published numbers; obviously there is a small difference in how MASE is being calculated (my code above uses `forecast::accuracy()` with the default values).  We're confident the data is identical because of the exact match of the MAPE values of all three sets of naive forecasts (there is less discretion in exactly how to measure MAPE).
+
 
