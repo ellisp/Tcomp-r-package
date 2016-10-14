@@ -24,7 +24,7 @@ opts_chunk$set(comment=NA, fig.width=7, fig.height=4)
 options(verbose = FALSE, xtable.type = "html")
 ```
 
-The data are all in a lazy-loaded list called `tourism` which consists of `r length(tourism)` objects.  Tourism is a list of class `Mcomp`, a class inherited from Hyndman et al.'s [`Mcomp` package](https://CRAN.R-project.org/package=Mcomp) which has the data from the M1 and M3 forecasting competitions.
+The data are all in a lazy-loaded list called `tourism` which consists of `r length(tourism)` objects.  `tourism` is a list of class `Mcomp`, a class inherited from Hyndman et al.'s [`Mcomp` package](https://CRAN.R-project.org/package=Mcomp) which has the data from the M1 and M3 forecasting competitions.
 
 ```{r}
 length(tourism)
