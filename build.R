@@ -13,5 +13,8 @@ check("pkg")
 
 knit2html("README.Rmd")
 
+build_vignettes("pkg")
 build("pkg")
+
+# devtools::install_github("ellisp/Tcomp-r-package/pkg")
 
