@@ -22,7 +22,7 @@ Usage is straight-forward.  All 1,311 series are elements in a single list calle
 ```{r}
 library(Tcomp)
 plot(tourism$M4)
-plot(forecast(tourism$Q12$x))
+plot(forecast::forecast(tourism$Q12$x))
 ```
 
 A wrapper function `forecast_comp` is provided that fits four models from the `forecast` package and returns the mean absolute scaled error for user-provided testing periods.

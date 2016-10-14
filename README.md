@@ -27,12 +27,10 @@ plot(tourism$M4)
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
 
 ```r
-plot(forecast(tourism$Q12$x))
+plot(forecast::forecast(tourism$Q12$x))
 ```
 
-```
-Error in plot(forecast(tourism$Q12$x)): could not find function "forecast"
-```
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-2.png)
 
 A wrapper function `forecast_comp` is provided that fits four models from the `forecast` package and returns the mean absolute scaled error for user-provided testing periods.
 
@@ -59,50 +57,6 @@ This method will also work with the data from the `Mcomp` package:
 
 ```r
 library(Mcomp)
-```
-
-```
-Loading required package: tseries
-```
-
-```
-
-    'tseries' version: 0.10-35
-
-    'tseries' is a package for time series analysis and
-    computational finance.
-
-    See 'library(help="tseries")' for details.
-```
-
-```
-Loading required package: forecast
-```
-
-```
-Loading required package: zoo
-```
-
-```
-
-Attaching package: 'zoo'
-```
-
-```
-The following objects are masked from 'package:base':
-
-    as.Date, as.Date.numeric
-```
-
-```
-Loading required package: timeDate
-```
-
-```
-This is forecast 7.2 
-```
-
-```r
 round(forecast_comp(M3[[2000]], tests = list(1, 3, 6, 1:6), plot = FALSE), 2)
 ```
 

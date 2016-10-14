@@ -7,7 +7,7 @@
 #' with class Mdata, returns MASE statistics and (optionally) a summary graphic
 #' 
 #' @export
-#' @import forecast
+#' @importFrom forecast forecast accuracy auto.arima ets snaive
 #' @importFrom graphics par lines
 #' @param the_series a list of class \code{Mdata} eg from the \code{Mcomp} or \code{Tcomp} package.  Crucially, must include elements \code{x} (the training set), \code{xx} (the test set) and \code{h} (the forecast horizon)
 #' @param tests a list of the forecast horizons over which to return the MASE, passed to \code{accuracy}
