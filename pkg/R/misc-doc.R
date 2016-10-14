@@ -28,6 +28,29 @@
 "tourism"
 
 
+
+#'  
+#' Reproduction of selected tourism competition results
+#'
+#' Reproduction of selected results from the tourism forecasting competition described in 
+#' Athanasopoulos et al. 2011 (\url{http://robjhyndman.com/papers/forecompijf.pdf})
+#' 
+#' Note that only Mean Absolute Percentage Error of the naive forecasts matches exactly that published.
+#' All Mean Absolute Scaled Error results are slightly higher than those published due to an unknown
+#' difference in MASE method.  All results for ARIMA, ETS and Theta method forecasts differ due to
+#' changes in the forecasting methods since 2011.
+#' See Vignette for details,
+#' including the code required to re-create the `Tcomp_reproduction` object.
+#' 
+#' @format {A list of three elements named "monthly", "quarterly and "yearly".   
+#' These correspond to tables 4, 5 and 6 in the Athanasopoulos et al 2011 article.  
+#' }
+#' @source \url{http://robjhyndman.com/papers/the-tourism-forecasting-competition}
+#' @examples
+#' Tcomp_reproduction
+"Tcomp_reproduction"
+
+
 #' Tcomp: Data from the Tourism Forecasting competition
 #'
 #' The Tcomp package provides data from the tourism forecasting competition described
