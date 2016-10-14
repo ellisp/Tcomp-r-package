@@ -11,7 +11,7 @@ vignette: >
 
 ## Tourism data
 
-This vignette introduces the `Tcomp` R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition of 2011.  Full details on the competition are in [Athanasopoulos et al (2011)](http://robjhyndman.com/papers/forecompijf.pdf), originally in the International Journal of Forecasting (2011) **27**(3), 822-844, available in full from Hyndman's blog.  
+This vignette introduces the `Tcomp` R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition of 2011.  Full details on the competition are in [Athanasopoulos et al (2011)](http://robjhyndman.com/papers/forecompijf.pdf), originally in the International Journal of Forecasting (2011) **27**(3), 822-844, available in full from Hyndman's blog.  Unfortunately, the explanatory variables are not available, so only univariate forecasting methods can be tested with this data collection.
 
 The original data are also available from [Hyndman's site](http://robjhyndman.com/data/27-3-Athanasopoulos1.zip), in CSV format, and have been wrapped into the `Tcomp` package with his permission.  Any errors that occurred in the wrapping process are the package author's responsibility and if there is doubt, the R version should be checked against the CSV originals. However, testing has been pretty thorough, and further down in this vignette we successfully reproduce exactly the mean absolute percentage error of the naive forecasts that are *inter alia* reported in that 2011 article.  Please report errors as issues on [this package's GitHub page](https://github.com/ellisp/Tcomp-r-package/issues).
 
@@ -21,16 +21,17 @@ The original data are also available from [Hyndman's site](http://robjhyndman.co
 library(Tcomp)
 library(knitr)
 opts_chunk$set(comment=NA, fig.width=7, fig.height=4)
+options(verbose = FALSE, xtable.type = "html")
 ```
 
-The data are all in a lazy-loaded list called `tourism` which consists of `r length(tourism)` objects.  Tourism is a list of class `Mcomp`, a class inherited from Hyndman et al.'s `Mcomp` package which has the data from the M1 and M3 forecasting competitions [ref needed]
+The data are all in a lazy-loaded list called `tourism` which consists of `r length(tourism)` objects.  Tourism is a list of class `Mcomp`, a class inherited from Hyndman et al.'s [`Mcomp` package](https://CRAN.R-project.org/package=Mcomp) which has the data from the M1 and M3 forecasting competitions.
 
 ```{r}
 length(tourism)
 class(tourism)
 ```
 
-Each of the `r length(tourism)` objects in `tourism` is a list of class `Mdata` and it has the same elements as the data in the `Mcomp` package.  The `Mdata` class has its own print method which is a convenient way to see it in summary, shown hear with one of the annual time series:
+Each of the `r length(tourism)` objects in `tourism` is a list of class `Mdata` and it has the same elements as the data in the `Mcomp` package.  The example here is one of the annual time series:
 
 ```{r}
 tourism$Y5
@@ -50,12 +51,44 @@ plot(tourism$M11); grid()
 
 ```
 
+## Summary information
+
+Some of the descriptive statistics from Table 3 of Athanasopoulos et al. are reproduced below.
+
+```{r results = 'asis'}
+library(dplyr, warn.conflicts = FALSE)
+library(xtable)
+lengthsm <- sapply(subset(tourism, "monthly"), function(s){length(s$x) + length(s$xx)})
+lengthsq <- sapply(subset(tourism, "quarterly"), function(s){length(s$x) + length(s$xx)})
+lengthsy <- sapply(subset(tourism, "yearly"), function(s){length(s$x) + length(s$xx)})
+
+tmp <- data.frame(series_length = c(lengthsm, lengthsq, lengthsy),
+                          series_type = c(rep("Monthly", length(lengthsm)),
+                                          rep("Quarterly", length(lengthsq)),
+                                          rep("Yearly", length(lengthsy))
+                          )) %>%
+  group_by(series_type) %>%
+  summarise(
+    TotalNumber = length(series_length),
+    MeanLength = round(mean(series_length), 1),
+    MedianLength = median(series_length),
+    MinLength = min(series_length),
+    MaxLength = max(series_length)
+  ) %>%
+  select(-series_type) %>%
+  t() %>%
+  as.matrix()
+colnames(tmp) <- c("Monthly", "Quarterly", "Yearly")
+xtable(tmp, digits = 1)
+```
+
+Comparison with the original shows that while the number of series, median length, minimum length and maximum length match exactly; mean length only matches if the results above are truncated rather than rounded (ie 298.6 becomes 298).  Given the other statistics match, and the mean absolute percentage error of naive forecasts match (see below), this discrepancy is assumed to be a minor rounding error in Athanasopoulos et al.
 
 ## Analysis
 
 The `Tcomp` package provides `forecast_comp()`, a wrapper around functions from Hyndman's `forecast` package which performs forecasts based on:
 
-* exponential state space smoothing
+* exponential smoothing state space
 * ARIMA
 * theta
 * naive or seasonal naive
@@ -143,12 +176,12 @@ accuracy_measures(tourism, "yearly", list(1, 2, 3, 4, 1:2, 1:4))
 The code above isn't run in the build of the vignette for reasons of time (takes a few minutes to run on my laptop, making it to intensive for a CRAN build).  The results are available in the package however as a list called `Tcomp_reproduction`
 
 
-```{r}
-Tcomp_reproduction$monthly
-Tcomp_reproduction$quarterly
-Tcomp_reproduction$yearly
+```{r results = 'asis'}
+xtable(Tcomp_reproduction$monthly)
+xtable(Tcomp_reproduction$quarterly)
+xtable(Tcomp_reproduction$yearly)
 ```
 
-Comparing the results above to Tables 4, 5 and 6 in [Athanasopoulos et al.](http://robjhyndman.com/papers/forecompijf.pdf) we get exact matches for the mean absolute percentage error (MAPE) of the Naive forecasts, but not for any other rows.  It is expected that the methods for ARIMA, ETS and Theta forecasts in the current forecast package differ slightly from the methods used in the 2011 article.  However, I don't have an explanation for why the mean absolute scaled error estimates above for the naive forecasts don't match those in the 2011 article.  The numbers I obtain are slightly highter than the published numbers; obviously there is a small difference in how MASE is being calculated (my code above uses `forecast::accuracy()` with the default values).  We're confident the data is identical because of the exact match of the MAPE values of all three sets of naive forecasts (there is less discretion in exactly how to measure MAPE).
+Comparing the results above to Tables 4, 5 and 6 in [Athanasopoulos et al.](http://robjhyndman.com/papers/forecompijf.pdf) we get exact matches for the mean absolute percentage error (MAPE) of the Naive forecasts, but not for any other rows.  It is expected that the methods for ARIMA, ETS and Theta forecasts in the current forecast package differ slightly from the methods used in the 2011 article.  However, I don't have an explanation for why the mean absolute scaled error estimates above for the naive forecasts don't match those in the 2011 article.  The numbers I obtain are slightly highter than the published numbers; obviously there is a small difference in how MASE is being calculated (my code above uses `forecast::accuracy()` with the default values).  I'm confident the data is identical because of the exact match of the MAPE values of all three sets of naive forecasts (there is less discretion in exactly how to measure MAPE).
 
 

@@ -75,17 +75,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <div id="tourism-data" class="section level2">
 <h2>Tourism data</h2>
-<p>This vignette introduces the <code>Tcomp</code> R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition of 2011. Full details on the competition are in <a href="http://robjhyndman.com/papers/forecompijf.pdf">Athanasopoulos et al (2011)</a>, originally in the International Journal of Forecasting (2011) <strong>27</strong>(3), 822-844, available in full from Hyndman’s blog.</p>
+<p>This vignette introduces the <code>Tcomp</code> R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition of 2011. Full details on the competition are in <a href="http://robjhyndman.com/papers/forecompijf.pdf">Athanasopoulos et al (2011)</a>, originally in the International Journal of Forecasting (2011) <strong>27</strong>(3), 822-844, available in full from Hyndman’s blog. Unfortunately, the explanatory variables are not available, so only univariate forecasting methods can be tested with this data collection.</p>
 <p>The original data are also available from <a href="http://robjhyndman.com/data/27-3-Athanasopoulos1.zip">Hyndman’s site</a>, in CSV format, and have been wrapped into the <code>Tcomp</code> package with his permission. Any errors that occurred in the wrapping process are the package author’s responsibility and if there is doubt, the R version should be checked against the CSV originals. However, testing has been pretty thorough, and further down in this vignette we successfully reproduce exactly the mean absolute percentage error of the naive forecasts that are <em>inter alia</em> reported in that 2011 article. Please report errors as issues on <a href="https://github.com/ellisp/Tcomp-r-package/issues">this package’s GitHub page</a>.</p>
 </div>
 <div id="the-data" class="section level2">
 <h2>The data</h2>
-<p>The data are all in list called <code>tourism</code> which consists of 1311 objects. Tourism is a list of class <code>Mcomp</code>, a class inherited from Hyndman et al.’s <code>Mcomp</code> package which has the data from the M1 and M3 forecasting competitions [ref needed]</p>
+<p>The data are all in a lazy-loaded list called <code>tourism</code> which consists of 1311 objects. Tourism is a list of class <code>Mcomp</code>, a class inherited from Hyndman et al.’s <a href="https://CRAN.R-project.org/package=Mcomp"><code>Mcomp</code> package</a> which has the data from the M1 and M3 forecasting competitions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(tourism)</code></pre></div>
 <pre><code>[1] 1311</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(tourism)</code></pre></div>
 <pre><code>[1] &quot;Mcomp&quot;</code></pre>
-<p>Each of the 1311 objects in <code>tourism</code> is a list of class <code>Mdata</code> and it has the same elements as the data in the <code>Mcomp</code> package. The <code>Mdata</code> class has its own print method which is a convenient way to see it in summary, shown hear with one of the annual time series:</p>
+<p>Each of the 1311 objects in <code>tourism</code> is a list of class <code>Mdata</code> and it has the same elements as the data in the <code>Mcomp</code> package. The example here is one of the annual time series:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tourism$Y5</code></pre></div>
 <pre><code>Series: Y5
 Type of series: TOURISM
@@ -126,11 +126,127 @@ Frequency = 1
 <span class="kw">plot</span>(tourism$M11); <span class="kw">grid</span>()</code></pre></div>
 <p><img src="data:image/png;base64,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" alt /><!-- --></p>
 </div>
+<div id="summary-information" class="section level2">
+<h2>Summary information</h2>
+<p>Some of the descriptive statistics from Table 3 of Athanasopoulos et al. are reproduced below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr, <span class="dt">warn.conflicts =</span> <span class="ot">FALSE</span>)
+<span class="kw">library</span>(xtable)
+lengthsm &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">subset</span>(tourism, <span class="st">&quot;monthly&quot;</span>), function(s){<span class="kw">length</span>(s$x) +<span class="st"> </span><span class="kw">length</span>(s$xx)})
+lengthsq &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">subset</span>(tourism, <span class="st">&quot;quarterly&quot;</span>), function(s){<span class="kw">length</span>(s$x) +<span class="st"> </span><span class="kw">length</span>(s$xx)})
+lengthsy &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">subset</span>(tourism, <span class="st">&quot;yearly&quot;</span>), function(s){<span class="kw">length</span>(s$x) +<span class="st"> </span><span class="kw">length</span>(s$xx)})
+
+tmp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">series_length =</span> <span class="kw">c</span>(lengthsm, lengthsq, lengthsy),
+                          <span class="dt">series_type =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;Monthly&quot;</span>, <span class="kw">length</span>(lengthsm)),
+                                          <span class="kw">rep</span>(<span class="st">&quot;Quarterly&quot;</span>, <span class="kw">length</span>(lengthsq)),
+                                          <span class="kw">rep</span>(<span class="st">&quot;Yearly&quot;</span>, <span class="kw">length</span>(lengthsy))
+                          )) %&gt;%
+<span class="st">  </span><span class="kw">group_by</span>(series_type) %&gt;%
+<span class="st">  </span><span class="kw">summarise</span>(
+    <span class="dt">TotalNumber =</span> <span class="kw">length</span>(series_length),
+    <span class="dt">MeanLength =</span> <span class="kw">round</span>(<span class="kw">mean</span>(series_length), <span class="dv">1</span>),
+    <span class="dt">MedianLength =</span> <span class="kw">median</span>(series_length),
+    <span class="dt">MinLength =</span> <span class="kw">min</span>(series_length),
+    <span class="dt">MaxLength =</span> <span class="kw">max</span>(series_length)
+  ) %&gt;%
+<span class="st">  </span><span class="kw">select</span>(-series_type) %&gt;%
+<span class="st">  </span><span class="kw">t</span>() %&gt;%
+<span class="st">  </span><span class="kw">as.matrix</span>()
+<span class="kw">colnames</span>(tmp) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Monthly&quot;</span>, <span class="st">&quot;Quarterly&quot;</span>, <span class="st">&quot;Yearly&quot;</span>)
+<span class="kw">xtable</span>(tmp, <span class="dt">digits =</span> <span class="dv">1</span>)</code></pre></div>
+<!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
+<!-- Sat Oct 15 10:42:12 2016 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+Monthly
+</th>
+<th>
+Quarterly
+</th>
+<th>
+Yearly
+</th>
+</tr>
+<tr>
+<td align="right">
+TotalNumber
+</td>
+<td align="right">
+366.0
+</td>
+<td align="right">
+427.0
+</td>
+<td align="right">
+518.0
+</td>
+</tr>
+<tr>
+<td align="right">
+MeanLength
+</td>
+<td align="right">
+298.6
+</td>
+<td align="right">
+99.6
+</td>
+<td align="right">
+24.5
+</td>
+</tr>
+<tr>
+<td align="right">
+MedianLength
+</td>
+<td align="right">
+330.0
+</td>
+<td align="right">
+110.0
+</td>
+<td align="right">
+27.0
+</td>
+</tr>
+<tr>
+<td align="right">
+MinLength
+</td>
+<td align="right">
+91.0
+</td>
+<td align="right">
+30.0
+</td>
+<td align="right">
+11.0
+</td>
+</tr>
+<tr>
+<td align="right">
+MaxLength
+</td>
+<td align="right">
+333.0
+</td>
+<td align="right">
+130.0
+</td>
+<td align="right">
+47.0
+</td>
+</tr>
+</table>
+<p>Comparison with the original shows that while the number of series, median length, minimum length and maximum length match exactly; mean length only matches if the results above are truncated rather than rounded (ie 298.6 becomes 298). Given the other statistics match, and the mean absolute percentage error of naive forecasts match (see below), this discrepancy is assumed to be a minor rounding error in Athanasopoulos et al.</p>
+</div>
 <div id="analysis" class="section level2">
 <h2>Analysis</h2>
 <p>The <code>Tcomp</code> package provides <code>forecast_comp()</code>, a wrapper around functions from Hyndman’s <code>forecast</code> package which performs forecasts based on:</p>
 <ul>
-<li>exponential state space smoothing</li>
+<li>exponential smoothing state space</li>
 <li>ARIMA</li>
 <li>theta</li>
 <li>naive or seasonal naive</li>
@@ -150,7 +266,7 @@ Naive  1.0263770  0.1885182  0.18851823</code></pre>
 <p>For this particular series (which is a monthly one), taking the MASE (which I think is the better measure), only the ARIMA model out-performed the seasonal naive model (which is forecasts values as being the samne as the most recent observed value for that month).</p>
 <p><code>forecast_comp()</code> comes with an optional plot function which compares the four forecasting methods to actuals:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">forecast_comp</span>(tourism[[<span class="dv">1000</span>]], <span class="dt">tests =</span> <span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>), <span class="dt">plot =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAGACAMAAABFpiBcAAAAolBMVEUAAAAAADoAAGYAAP8AOjoAOpAAZrY6AAA6ADo6AGY6OgA6Ojo6OpA6ZmY6kJA6kLY6kNtmAABmADpmAGZmZjpmZmZmkJBmtrZmtttmtv+QOgCQOjqQZgCQkGaQtpCQ27aQ29uQ2/+xtc62ZgC2tma225C2/7a2/9u2///bkDrbtmbbtrbb25Db29/b/9vb////AAD/tmb/25D//7b//9v///96gDfyAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAXRUlEQVR4nO2da4OjuJmFcXXKlUySHbsyk6wrOxe3szPNZjo92MX//2urOwIkWwhsDvR5PhTGfnkljg+64bKLmhBgirkrQMg1aFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaGhQAg0NSqChQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoEk26GVfKDbHvIJOh0DCbcqR55fi6ZNXg+Ign9scbYJToV+3cXVdykpWOtKVX+zsw8rm2NV9zi8yiaitSN+tsjjSlKDDdA16ZzYtMwnv1BbneTIPpYRVYeTWKnuqK/xdkUKVcxKbsNgJPMig72+9d/ukT/g2pXGak0zsWYM+f5GptSY2TgSKpyvrZU3VFGZfeX/zlbVI56naJhhUnsK3/TOblpmEjxi0tM9plT3VNf6uTHGotUHDYicwxKAj3oigTmnX1Pvb5jt1JdoanIQtjUH/rJqxPyvBXJwQaScLlGoqDevWm9K8Eq1BgkHdKQTObFpmEr5TrBS8NuKJl3ZaZV91U5y3a1oQZdDkt7tLlkFFO64u6Mt+84N8UNq3XzZOyhMn80Bdh1vVyon31uzpM5GNwk8mgU0oZPhR9hF+R3F+ef7tRV+yugZVY9DvxUFV8b0KdnHqPVGC6u5aPbP5xgrUvFLpuur3UKkonhE5flW1/UUUdyqcxeVJPv1LnYSs848mzDUod2Mm4a8Y1DSJ6nWnug3zdlWpu0baL3UGOQatbEeravD85WTHJ7r9V21T0egjXtI6mXd05+uk4l1CqZfFXodlsdVimBqIna3t4v+xF42hsk0rzjpQPVKH7LSyWkP7ivWvOFImV33Z7uwZ1K9Hab2oT/q3OQz6SOHDBnUDfqutU92q5O2KFH/XI6Ft7cQeyuAx6M6MfUv9Xm3dO652d6rickd1h+ql0l5vbq/Wp2pTNQmFTls9XCztu66OLE2YRnlLGfS/38Qc5fn/ZGwTZ1pHPYmx0jUGbV6x/hWXvWiSRVrRQR39Mah4x0v3fuizaJ30o7r4OYR3amvZrEH10wdruEb1zptlYg9y56TLyhtEZxj07DpcbQBzGRaHc6utb3Ut9i335o9GJ3eu8rHpflXHbXKpF92c2SpmDHo4Pf/nbatimzjVmaQZVL8sfVmJLu6gndqaJNl66DpW+pwO8xj0ocJHDGpa653pshvVa6eS29U13RyNQfN0yujiKzMnKXb6qiitTs0U4mR7vrLpcg612/N00gtCNmHAoC67rkGlj7cGLUVPvKuakgoVIqRrdfG1b9DmFeet0iXadWfxth6VGeeqMejxwQadQ/hIF29eevqkDdqoboT0d1UK0YQqg+bqlGFQ/0LWOpnhr7t0KucTfZnLztNOcNx6SaNT70K2XXRd28FUoYeJWutdY9BKjPXV++PFmQbVG2TWbYM2Q1RzSlXx7Ztoip//x3SHwRbUvqPzGfShwocNaq9T0eWYcZU/bu3sqhTquce2oP5QSJ+mUsUMhaQTzCKOHISLABml/OH2Ojr5Q6GuTp4wugZyRu7GoAdzMZsj62b81Vlm8gzavOKqctn/4UU8t/nGdFB2McUzqD8G7Ro0cwkaW/iwQe0Kk1G5Zdu6u9sMRB40Bg1MJlWhncmkdIx5YC4pPb3c/Oz22jrV3mSyq5PxWDPwkm+LW2Y6iALku/H0qRVnbyS5lNagphMzvVDTwJ4KN3qwK/ByousZ1J/FtwyqYjNv8iAL709J66aLNzKYDJ7qMqCza2p+anTNYOw6qF17aC/HlWqZRg/zCjOa1v1Ns7Do6eQvx7V1cu2TGMc066B6zKT2T7pP/9WLM72au6HZNai7CdoszVVmTdC6Vta2Y1B/HbRlUHVmOdJDCx8zqPb0To8p/XdHBPzc3j02Lcoj1kEXRNnqdC+vx8hOeefOed101WtJ29vNFnuNBpWrRc1eGdvJvj1MJG2VOzr3du9/L35JnLw+N96Anl+SPkxFIpxaI5sbDWi22Ks0KFkPNCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaMYblBafFurZggZFg3q2oEFv8dnwqPLWrufvknQ9adBbDBQ0m8Jy74Lmw0o55ILPl2PtggoNlaAfDY8qd7V6Gm8O1JMtaIxMQUezUj1d00mDjsP2QE3T+fHjhw80aC5Wzc8f8/SkQTsEBP3wQSr6qAqsTk8z8MzUkwbt8Ls38FRXutJTPHpUBValpz+Iz9NTyXHZj/iq4ZUI+tlMipyO9krPMCj1tHqqhnOUntqgr9/lfYG4y7B8hJ4fPqieyOhohczo4qlnXTfGHKenMegx/+uGVyNo+wL3HgyeJFHP6fS0BjW/dJHBWgS1+vk62s5p4DLT16VnUYSWxKfSszForX+nanj9Bh8xMzcE9XT09Rxs0K9Dz7aInqZT6ekbNLOK+YfOQFzQRsiWjiMMOrhmS7szF6yseTKqJ291xrkuaERIflgkwO133k46o6SWpDcn+wt3GXXNOOahBHv0Hte0HG7QFeuZ2ChNpacu6mR/xjE29bwiOLigQ1v4ccY0rFfPh3eY7THo+U/hQf01waEFnWcAslo9Z5AzyaBXXwcWdK7x8Ur1nEVO08WbK/kUvgGyTEFnnL6tT8/ZZsOm1PL6oP6a4IiCzr66sCo9ZxUzseQrgiMJupiVr0XpOW8V1F/5g/dSrNig/naGuQGQ0oN6TkYzBpXdTVRQ8GURCCk9Fq4nhjU13iy+evq0zGURIDk1y9YTS05/mal6/m3AsgjKrc7ZK9BnwXrOXX6P1jJTGfn0DfCyCJqemqXqCaimnSQZRSMfDwNdFoG73C3L1BNSzeUuM8G6MwVIPWcq+Dp6DPq34ash7QwPZvah2nWo53SYMWhx45+8gJZFgMV0UM/JsHUrr0qKsiwCLqYH9ZwIVz9586NAnnUuQEwf6jkNpo5CzitX/GMF7a0HAiwPDgVRzw5TF3MnVD2vy1k/bFmkrdzSpGzA1HOZJM7iH7EssnQpG6jndMD8V+c65BwB9QySeBo5yyJDJFqLnKlQz1TSTiRjWURKlCjT4sdJg6GeySSdyvBZp5XoplTLH8VnQD3TuYtBfY1iei11hj4F1DOdxC4+fVmkr1JoUXOFSg6BeiYz6aeZrgi13EXNu0A9Uxl/gt7C+uhchHp2mGCZ6atiItmpp+GmUuOXmQammj/yPkkHQT2nPeTml2ENLH3NgqZAPSdOTkGnhXpOnfzGl2ENLX3NgiZBPac+5MaXYQ0sfc2CpkE973jI+FRrFnQ6qGfmIeNTrVnQ6aCemYeMT7VmQaeDeiYfctnbddWMH6YiPahnOql3knJ/eZIEoZ6pJBr0/W3ED0yTHtQzFX4ggUBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEmrEGVR+5Pb+ob3MTm81Rfbdb6A5eIFJsQl8D14mUm7ScZhPIKZ89uDTtTUJkpKJ3gHp2GGnQy16Ud9nv6nIrNgf1sxanbehOXiiyCt7wa0eqTVJOHRnMKQusxFto0rQ3CZHhit4B6tllnEHL4q/impPX3eX1aDby/xn6/8oQiqxPoft998hZicv1/e1g0rQ3CZHhpHeAevYYZ9B/fzk3pyTqIetjz+x25Ps/u1G9yI5atyPDOSXiWk5JGoqMJ50Y6tljijGo6mHEQEN/sXCsnv3Iy+s3auh0JdJsEnLaTSSnaB/ce31L0F5kPOnkUM8OU02SvhXNuBy16B9QjZ18J/KPx+CXEXuRZpOQ00ZGcqoxWpqggchY0umhnh0mMWhdJ9SzH2n2rkX2D7gRGctZqlluiqCByFjSO0A9O0xlULG9OgAPRcbq6UWaTUJObxNSSa1/JAzqg5Gxit4B6tlhkjHoq1pGkB/CjS+LBCIr2fb/JbxuZyLNJiGn2YRzyj5FcntZJBgZq+gdoJ4dJmlBq8JfLr7s44vA7cgy/E85fqTZJOQ0m2BO/V1dB5umvUmIjFT0DlDPDrzVSaChQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaGhQAg0NSqChQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaGhQAg0NSqChQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaGhQAg0NSqChQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACzYMMetkXis0x7/jTIZBwm3BcYfivfdFNEciKw0yCiSgVdPJjzy9Pn4YXfwkprqiKAfkWYdD3t965Suftbh95zaCBrDjMJJgs9lCPNagqfnEGHWGGoN4J9lScX+SbHKgAukHnEEwa9PlLx6B5xS/XoOcX3TBc9psf5IPSXttVodVRV7t8oJqRrTzfQpyT2ZOoZzY/mQQ2obDijy8i8PziK9AY9GTS6wJNVlcYFjMJpg7ZWYOatLIF1f5WT5dNW9xN4Cv7i6e4LVBFPP0L26CV7rsOWoznL7oX3umzUyeknzE6i5f0Cf/6ZgMbvVW8SyhlsDQNgDOoff7kZ/106oSDMJNgooi/v6ir1gm1VQatZDmqZTw1WbsJWsr+0ijuCjRVxjSoOS89DC/1Bb41A5zLXu3KVzdHuaO6AfVSqYU/1G5PcXKpmoRCrq0UY6f2bNHOoELh0maVZZiOyBT2GB2SmUkweV3IQ6RBW2llOSLj8xdXvAxvJ+gqaxXvnIF4FdmgesQthdCNhLm6ioM/FJdXptdF2RP2Wjqj96H2Eiorqj9VyKAHPfpxBdqBmi7sMTokM5NgupjN0YxBddqzblOlC3dN8fp1P0Fb2UZxv0D5CHsMqmsnTmGnLkrb6BeHpton2w2UTdfluodWgyATNAnTDFq2ZGwKw2ImwVSxogn1unhjMNF6/ufNDIAjBm0r6zcJtkD9aNCqwMMN6jcIWm8zQ3HVruTZV/ppeVFujrat03sqqNG71yB0+uy+QU2BKqtfGBIzCaaKVWPIbZNWRby/Pf3vi+qzPa3aCdrKhlvQ5gpJ5OEG9QckWi4lgxlSycus1ON+OZgXATJKPlu7PZWm0dsfUqUY1BWosrrCHqNDMjMJ1owito002mBl8b0eIJjiZXg7QVvZRvGFjEEDk1KlXWdS6oYy6jwlepq6+dnt1bWvd+1NSlMM2hQos/5gC3uMDsnMJJgp9mRaUK+Lly+pmPYsvpWgpexPjeLLmMWHlvXUxe3ucdhlvVItUogXleDyGXGIahaaFUtPb39ZL8WgrkCV1RWGxUyCmWLV7NylNWMJu3jv3ZPqJvCV9Qy6gHVQQvKgQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaGhQAg0NSqAZb1BafFpWrOfvkoHH0KBorFbPwd5U0KC3+Gx4VHkr1dPZc6Ce+XIUluwM8PzuoEHHIez5uUPikWxBY3xWthws6GhWp6cZeNKg0+Ls+dHwqIJXpafpfXwG6kmDdtAqClk/dnhUBVakp2w5e8akQcchzamuehp0FDFf0qCjkObsa/nhAw06lKgxcwx62af+8GUsw/IxHXvrilfGlBv5YECur1DP3oJOI5/btp9ITSz/XF6/y/+Zi2UK2qPvS2NMtREPBuT6uvT0rOlZ1Mnntp0nUrPLP5fX4/kl9+cqFydomG6D6YyZZdCvRs/uOrjb78qXq6c1aK1/VienijkHzUlRhO4xdBvMzoNhXXyOngu88RGurH5yeoPWA39hqZVhObQ09fzQF9Tvm4ZNktav5+1LaeoufkRd8w99PAFRi84V3wjajO4HzDolq9YzsZWfdJKUX9GldUnx17oNZu6yyPhKPqqgLJLf7onXQfWP2BU5qyPYgsaGnD2ixswy6Er1HNAaTWvQk/1Bx9jU84rgyIJmXPE9cgy6Tj2zOstJbnW6MdP5T+FB/TXBcQXNkjRq1AE5Vqhn9lhurJ5JBr36OqagknFX/B0NujA9p5lojDGou5JP4RsgCxNUMt3sLcOgq9FzylnwKIPa3/GODeqvCY4kqAZgaWHxet5vgSbPoLe4IjiGoJrFrHuB6wmkoa7J+5v5IfrIoP52hrnBsuay9cTRsfbHoLK7iQqKvSwCZE1Njp4oNz5mr0AbbxZfPX1a5LIImKL1ovWEE9NfZqqefxuwLIJxxc9dfpAsPS1zng+gmK1lpjLy6RsKOpBl6gmppp0kGUUjHw/DXBaBFFSxRD1B1VzuMhOooGmA6Tn7SC2OHoP+bfhqSDvDgwEWVLIoPcG1NGPQ4sY/eQEtM4ELqliMnvha2vqVVyVFWRZZgjk1S9BzEWK6KsqbHwXyrHM55lTg6BlZDlyImqaWQs4rV/zMggIstw4FRM+WcEWbCYu5J6qe1+WsH7YsUoQFna6ABwGi5wKV65M4i3/Essgq9FRA6LkSOWH+q3MleuYztZ7TpJmdxPPIWRYZIvXXZk/qmUraiWQsi0iJEmVa4jBzHNQzmaRTGT7rDHzdWaT8VamZCPVM5y4G9TWK6bXUGfoUUM90Erv49GWRvkqhRc0VKjkE6pnMpJ9muiLUchc17wL1TGX8CXoL66NzEerZYYJlpq+KiWSnnoabSo1fZhqYav7I+yQdBPWc9pCbX4Y1sPQ1C5oC9Zw4OQWdFuo5dfIbX4Y1tPQ1C5oE9Zz6kBtfhjWw9DULmgb1vOMh41OtWdDpoJ6Zh4xPtWZBp4N6Zh4yPtWaBZ0O6pl8yGVv11UzfpiK9KCe6aTeScr95UkShHqmkmjQ97cRPzBNelDPVPiBBAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaMYaVH3k9vyivs1NbDZH9d1uoTt4gUixCX0NXCdSbtJymk0gp3z24NK0NwmRkYreAerZYaRBL3tR3mW/q8ut2BzUz1qctqE7eaHIKnjDrx2pNkk5dWQwpyywEm+hSdPeJESGK3oHqGeXcQYti7+Ka05ed5fXo9nI/2fo/ytDKLI+he733SNnJS7X97eDSdPeJESGk94B6tljnEH//eXcnJKoh6yPPbPbke//7Eb1Ijtq3Y4M55SIazklaSgynnRiqGePKcagqocRAw39xcKxevYjL6/fqKHTlUizSchpN5Gcon1w7/UtQXuR8aSTQz07TDVJ+lY043LUon9ANXbyncg/HoNfRuxFmk1CThsZyanGaGmCBiJjSaeHenaYxKB1nVDPfqTZuxbZP+BGZCxnqWa5KYIGImNJ7wD17DCVQcX26gA8FBmrpxdpNgk5vU1IJbX+kTCoD0bGKnoHqGeHScagr2oZQX4IN74sEoisZNv/l/C6nYk0m4ScZhPOKfsUye1lkWBkrKJ3gHp2mKQFrQp/ufiyjy8CtyPL8D/l+JFmk5DTbII59Xd1HWya9iYhMlLRO0A9O/BWJ4GGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaGhQAg0NSqChQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQEODEmhoUAINDUqgoUEJNDQogYYGJdDQoAQaGpRAQ4MSaGhQAg0NSqChQQk0NCiBhgYl0NCgBBoalEBDgxJoaFACDQ1KoKFBCTQ0KIGGBiXQ0KAEGhqUQPP/wbaVpKiLK+AAAAAASUVORK5CYII=" alt /><!-- --></p>
+<p><img src="data:image/png;base64,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" alt /><!-- --></p>
 <pre><code>              1         2         3         4
 ARIMA  7.882166  8.206717 12.078049 11.002449
 ETS    8.250308  8.920956 13.077187 12.316143
@@ -170,9 +286,9 @@ Naive  2.674216  3.485233  5.397712  5.799579</code></pre>
 <span class="kw">library</span>(tidyr)
 <span class="kw">library</span>(parallel)
 
-<span class="co"># this function runs the four standard models in forecast_comp, which is part of the package proper,</span>
-<span class="co"># on a large chunk of the competition series from either Mcomp or Tcomp.  The aim is to help</span>
-<span class="co"># comparisons with Athanasopoulos et al.  </span>
+<span class="co"># this function runs the four standard models in forecast_comp</span>
+<span class="co"># on a large chunk of the competition series from either Mcomp or Tcomp.  </span>
+<span class="co"># The aim is to help comparisons with Athanasopoulos et al.  </span>
 <span class="co">#</span>
 <span class="co"># The use of makePSOCKcluster and parLapply speeds up the analysis nearly four fold on my laptop</span>
 <span class="co"># eg running the test on all the yearly tourism series takes 12 seconds rather than 44 seconds.</span>
@@ -189,7 +305,6 @@ accuracy_measures &lt;-<span class="st"> </span>function(dataobj, cond1, tests){
   
   <span class="kw">clusterEvalQ</span>(cluster, {
     <span class="kw">library</span>(Tcomp)
-    <span class="kw">library</span>(Mcomp) <span class="co"># for subset.Mdata</span>
     <span class="kw">library</span>(forecast)
   })
   
@@ -222,46 +337,964 @@ accuracy_measures &lt;-<span class="st"> </span>function(dataobj, cond1, tests){
 <span class="kw">accuracy_measures</span>(tourism, <span class="st">&quot;quarterly&quot;</span>, <span class="kw">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">1</span>:<span class="dv">4</span>, <span class="dv">1</span>:<span class="dv">8</span>))
 <span class="kw">accuracy_measures</span>(tourism, <span class="st">&quot;yearly&quot;</span>, <span class="kw">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>:<span class="dv">4</span>))</code></pre></div>
 <p>The code above isn’t run in the build of the vignette for reasons of time (takes a few minutes to run on my laptop, making it to intensive for a CRAN build). The results are available in the package however as a list called <code>Tcomp_reproduction</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Tcomp_reproduction$monthly</code></pre></div>
-<pre><code>  method measure     1     2     3     6    12    18    24   1-3  1-12
-1  ARIMA    MAPE 18.74 21.04 21.21 23.38 26.75 24.43 35.41 20.33 22.70
-2    ETS    MAPE 18.07 17.54 18.15 20.55 20.65 18.89 23.51 17.92 19.64
-3  Naive    MAPE 19.89 21.56 20.64 20.94 21.09 19.97 22.30 20.70 21.38
-4  Theta    MAPE 19.52 20.39 20.67 20.63 21.58 18.77 23.11 20.19 21.33
-5  ARIMA    MASE  1.08  1.35  1.48  1.56  1.23  2.09  1.68  1.31  1.38
-6    ETS    MASE  1.25  1.35  1.39  1.41  1.20  1.87  1.64  1.33  1.34
-7  Naive    MASE  1.29  1.50  1.47  1.55  1.16  1.89  1.57  1.42  1.45
-8  Theta    MASE  1.44  1.60  1.83  1.52  1.22  1.84  1.57  1.62  1.50
-   1-24
-1 26.13
-2 21.06
-3 22.56
-4 22.39
-5  1.60
-6  1.54
-7  1.63
-8  1.65</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Tcomp_reproduction$quarterly</code></pre></div>
-<pre><code>  method measure     1     2     3     4     6     8   1-4   1-8
-1  ARIMA    MAPE 13.35 13.02 15.06 14.78 16.52 23.08 14.05 16.47
-2    ETS    MAPE 11.59 12.30 13.54 14.43 14.83 22.03 12.97 15.31
-3  Naive    MAPE 13.95 14.79 14.41 13.61 18.02 21.15 14.19 16.46
-4  Theta    MAPE 13.75 13.81 14.39 14.65 15.02 21.31 14.15 15.93
-5  ARIMA    MASE  1.20  1.40  1.31  1.35  1.97  1.99  1.31  1.60
-6    ETS    MASE  1.24  1.39  1.20  1.36  1.92  1.99  1.30  1.59
-7  Naive    MASE  1.41  1.53  1.30  1.27  2.22  1.93  1.38  1.70
-8  Theta    MASE  1.58  1.53  1.30  1.34  1.85  1.91  1.44  1.66</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Tcomp_reproduction$yearly</code></pre></div>
-<pre><code>  method measure     1     2     3     4   1-2   1-4
-1  ARIMA    MAPE 26.28 26.60 32.42 37.20 26.44 30.62
-2    ETS    MAPE 23.02 21.81 25.33 29.53 22.41 24.92
-3  Naive    MAPE 21.47 20.80 24.12 28.05 21.14 23.61
-4  Theta    MAPE 22.70 20.95 22.99 26.66 21.83 23.33
-5  ARIMA    MASE  1.82  2.67  3.71  4.57  2.25  3.19
-6    ETS    MASE  1.64  2.53  3.49  4.35  2.09  3.00
-7  Naive    MASE  1.58  2.51  3.54  4.40  2.05  3.01
-8  Theta    MASE  1.56  2.34  3.15  3.87  1.95  2.73</code></pre>
-<p>Comparing the results above to Tables 4, 5 and 6 in <a href="http://robjhyndman.com/papers/forecompijf.pdf">Athanasopoulos et al.</a> we get exact matches for the mean absolute percentage error (MAPE) of the Naive forecasts, but not for any other rows. It is expected that the methods for ARIMA, ETS and Theta forecasts in the current forecast package differ slightly from the methods used in the 2011 article. However, I don’t have an explanation for why the mean absolute scaled error estimates above for the naive forecasts don’t match those in the 2011 article. The numbers I obtain are slightly highter than the published numbers; obviously there is a small difference in how MASE is being calculated (my code above uses <code>forecast::accuracy()</code> with the default values). We’re confident the data is identical because of the exact match of the MAPE values of all three sets of naive forecasts (there is less discretion in exactly how to measure MAPE).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtable</span>(Tcomp_reproduction$monthly)</code></pre></div>
+<!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
+<!-- Sat Oct 15 10:42:20 2016 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+method
+</th>
+<th>
+measure
+</th>
+<th>
+1
+</th>
+<th>
+2
+</th>
+<th>
+3
+</th>
+<th>
+6
+</th>
+<th>
+12
+</th>
+<th>
+18
+</th>
+<th>
+24
+</th>
+<th>
+1-3
+</th>
+<th>
+1-12
+</th>
+<th>
+1-24
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+ARIMA
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+18.74
+</td>
+<td align="right">
+21.04
+</td>
+<td align="right">
+21.21
+</td>
+<td align="right">
+23.38
+</td>
+<td align="right">
+26.75
+</td>
+<td align="right">
+24.43
+</td>
+<td align="right">
+35.41
+</td>
+<td align="right">
+20.33
+</td>
+<td align="right">
+22.70
+</td>
+<td align="right">
+26.13
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+ETS
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+18.07
+</td>
+<td align="right">
+17.54
+</td>
+<td align="right">
+18.15
+</td>
+<td align="right">
+20.55
+</td>
+<td align="right">
+20.65
+</td>
+<td align="right">
+18.89
+</td>
+<td align="right">
+23.51
+</td>
+<td align="right">
+17.92
+</td>
+<td align="right">
+19.64
+</td>
+<td align="right">
+21.06
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+Naive
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+19.89
+</td>
+<td align="right">
+21.56
+</td>
+<td align="right">
+20.64
+</td>
+<td align="right">
+20.94
+</td>
+<td align="right">
+21.09
+</td>
+<td align="right">
+19.97
+</td>
+<td align="right">
+22.30
+</td>
+<td align="right">
+20.70
+</td>
+<td align="right">
+21.38
+</td>
+<td align="right">
+22.56
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+Theta
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+19.52
+</td>
+<td align="right">
+20.39
+</td>
+<td align="right">
+20.67
+</td>
+<td align="right">
+20.63
+</td>
+<td align="right">
+21.58
+</td>
+<td align="right">
+18.77
+</td>
+<td align="right">
+23.11
+</td>
+<td align="right">
+20.19
+</td>
+<td align="right">
+21.33
+</td>
+<td align="right">
+22.39
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+ARIMA
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.08
+</td>
+<td align="right">
+1.35
+</td>
+<td align="right">
+1.48
+</td>
+<td align="right">
+1.56
+</td>
+<td align="right">
+1.23
+</td>
+<td align="right">
+2.09
+</td>
+<td align="right">
+1.68
+</td>
+<td align="right">
+1.31
+</td>
+<td align="right">
+1.38
+</td>
+<td align="right">
+1.60
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+ETS
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.25
+</td>
+<td align="right">
+1.35
+</td>
+<td align="right">
+1.39
+</td>
+<td align="right">
+1.41
+</td>
+<td align="right">
+1.20
+</td>
+<td align="right">
+1.87
+</td>
+<td align="right">
+1.64
+</td>
+<td align="right">
+1.33
+</td>
+<td align="right">
+1.34
+</td>
+<td align="right">
+1.54
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+Naive
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.29
+</td>
+<td align="right">
+1.50
+</td>
+<td align="right">
+1.47
+</td>
+<td align="right">
+1.55
+</td>
+<td align="right">
+1.16
+</td>
+<td align="right">
+1.89
+</td>
+<td align="right">
+1.57
+</td>
+<td align="right">
+1.42
+</td>
+<td align="right">
+1.45
+</td>
+<td align="right">
+1.63
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+Theta
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.44
+</td>
+<td align="right">
+1.60
+</td>
+<td align="right">
+1.83
+</td>
+<td align="right">
+1.52
+</td>
+<td align="right">
+1.22
+</td>
+<td align="right">
+1.84
+</td>
+<td align="right">
+1.57
+</td>
+<td align="right">
+1.62
+</td>
+<td align="right">
+1.50
+</td>
+<td align="right">
+1.65
+</td>
+</tr>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtable</span>(Tcomp_reproduction$quarterly)</code></pre></div>
+<!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
+<!-- Sat Oct 15 10:42:20 2016 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+method
+</th>
+<th>
+measure
+</th>
+<th>
+1
+</th>
+<th>
+2
+</th>
+<th>
+3
+</th>
+<th>
+4
+</th>
+<th>
+6
+</th>
+<th>
+8
+</th>
+<th>
+1-4
+</th>
+<th>
+1-8
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+ARIMA
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+13.35
+</td>
+<td align="right">
+13.02
+</td>
+<td align="right">
+15.06
+</td>
+<td align="right">
+14.78
+</td>
+<td align="right">
+16.52
+</td>
+<td align="right">
+23.08
+</td>
+<td align="right">
+14.05
+</td>
+<td align="right">
+16.47
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+ETS
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+11.59
+</td>
+<td align="right">
+12.30
+</td>
+<td align="right">
+13.54
+</td>
+<td align="right">
+14.43
+</td>
+<td align="right">
+14.83
+</td>
+<td align="right">
+22.03
+</td>
+<td align="right">
+12.97
+</td>
+<td align="right">
+15.31
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+Naive
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+13.95
+</td>
+<td align="right">
+14.79
+</td>
+<td align="right">
+14.41
+</td>
+<td align="right">
+13.61
+</td>
+<td align="right">
+18.02
+</td>
+<td align="right">
+21.15
+</td>
+<td align="right">
+14.19
+</td>
+<td align="right">
+16.46
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+Theta
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+13.75
+</td>
+<td align="right">
+13.81
+</td>
+<td align="right">
+14.39
+</td>
+<td align="right">
+14.65
+</td>
+<td align="right">
+15.02
+</td>
+<td align="right">
+21.31
+</td>
+<td align="right">
+14.15
+</td>
+<td align="right">
+15.93
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+ARIMA
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.20
+</td>
+<td align="right">
+1.40
+</td>
+<td align="right">
+1.31
+</td>
+<td align="right">
+1.35
+</td>
+<td align="right">
+1.97
+</td>
+<td align="right">
+1.99
+</td>
+<td align="right">
+1.31
+</td>
+<td align="right">
+1.60
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+ETS
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.24
+</td>
+<td align="right">
+1.39
+</td>
+<td align="right">
+1.20
+</td>
+<td align="right">
+1.36
+</td>
+<td align="right">
+1.92
+</td>
+<td align="right">
+1.99
+</td>
+<td align="right">
+1.30
+</td>
+<td align="right">
+1.59
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+Naive
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.41
+</td>
+<td align="right">
+1.53
+</td>
+<td align="right">
+1.30
+</td>
+<td align="right">
+1.27
+</td>
+<td align="right">
+2.22
+</td>
+<td align="right">
+1.93
+</td>
+<td align="right">
+1.38
+</td>
+<td align="right">
+1.70
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+Theta
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.58
+</td>
+<td align="right">
+1.53
+</td>
+<td align="right">
+1.30
+</td>
+<td align="right">
+1.34
+</td>
+<td align="right">
+1.85
+</td>
+<td align="right">
+1.91
+</td>
+<td align="right">
+1.44
+</td>
+<td align="right">
+1.66
+</td>
+</tr>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtable</span>(Tcomp_reproduction$yearly)</code></pre></div>
+<!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
+<!-- Sat Oct 15 10:42:20 2016 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+method
+</th>
+<th>
+measure
+</th>
+<th>
+1
+</th>
+<th>
+2
+</th>
+<th>
+3
+</th>
+<th>
+4
+</th>
+<th>
+1-2
+</th>
+<th>
+1-4
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+ARIMA
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+26.28
+</td>
+<td align="right">
+26.60
+</td>
+<td align="right">
+32.42
+</td>
+<td align="right">
+37.20
+</td>
+<td align="right">
+26.44
+</td>
+<td align="right">
+30.62
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+ETS
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+23.02
+</td>
+<td align="right">
+21.81
+</td>
+<td align="right">
+25.33
+</td>
+<td align="right">
+29.53
+</td>
+<td align="right">
+22.41
+</td>
+<td align="right">
+24.92
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+Naive
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+21.47
+</td>
+<td align="right">
+20.80
+</td>
+<td align="right">
+24.12
+</td>
+<td align="right">
+28.05
+</td>
+<td align="right">
+21.14
+</td>
+<td align="right">
+23.61
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+Theta
+</td>
+<td>
+MAPE
+</td>
+<td align="right">
+22.70
+</td>
+<td align="right">
+20.95
+</td>
+<td align="right">
+22.99
+</td>
+<td align="right">
+26.66
+</td>
+<td align="right">
+21.83
+</td>
+<td align="right">
+23.33
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+ARIMA
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.82
+</td>
+<td align="right">
+2.67
+</td>
+<td align="right">
+3.71
+</td>
+<td align="right">
+4.57
+</td>
+<td align="right">
+2.25
+</td>
+<td align="right">
+3.19
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+ETS
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.64
+</td>
+<td align="right">
+2.53
+</td>
+<td align="right">
+3.49
+</td>
+<td align="right">
+4.35
+</td>
+<td align="right">
+2.09
+</td>
+<td align="right">
+3.00
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+Naive
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.58
+</td>
+<td align="right">
+2.51
+</td>
+<td align="right">
+3.54
+</td>
+<td align="right">
+4.40
+</td>
+<td align="right">
+2.05
+</td>
+<td align="right">
+3.01
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+Theta
+</td>
+<td>
+MASE
+</td>
+<td align="right">
+1.56
+</td>
+<td align="right">
+2.34
+</td>
+<td align="right">
+3.15
+</td>
+<td align="right">
+3.87
+</td>
+<td align="right">
+1.95
+</td>
+<td align="right">
+2.73
+</td>
+</tr>
+</table>
+<p>Comparing the results above to Tables 4, 5 and 6 in <a href="http://robjhyndman.com/papers/forecompijf.pdf">Athanasopoulos et al.</a> we get exact matches for the mean absolute percentage error (MAPE) of the Naive forecasts, but not for any other rows. It is expected that the methods for ARIMA, ETS and Theta forecasts in the current forecast package differ slightly from the methods used in the 2011 article. However, I don’t have an explanation for why the mean absolute scaled error estimates above for the naive forecasts don’t match those in the 2011 article. The numbers I obtain are slightly highter than the published numbers; obviously there is a small difference in how MASE is being calculated (my code above uses <code>forecast::accuracy()</code> with the default values). I’m confident the data is identical because of the exact match of the MAPE values of all three sets of naive forecasts (there is less discretion in exactly how to measure MAPE).</p>
 </div>
 
 
