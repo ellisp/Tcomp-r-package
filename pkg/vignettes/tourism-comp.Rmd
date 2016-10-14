@@ -19,7 +19,6 @@ The original data are also available from [Hyndman's site](http://robjhyndman.co
 
 ```{r, echo = FALSE, results = 'hide', message = FALSE}
 library(Tcomp)
-library(Mcomp)
 library(knitr)
 opts_chunk$set(comment=NA, fig.width=7, fig.height=4)
 ```
@@ -107,7 +106,6 @@ accuracy_measures <- function(dataobj, cond1, tests){
   
   clusterEvalQ(cluster, {
     library(Tcomp)
-    library(Mcomp) # for subset.Mdata
     library(forecast)
   })
   

@@ -30,7 +30,9 @@ plot(tourism$M4)
 plot(forecast(tourism$Q12$x))
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-2.png)
+```
+Error in plot(forecast(tourism$Q12$x)): could not find function "forecast"
+```
 
 A wrapper function `forecast_comp` is provided that fits four models from the `forecast` package and returns the mean absolute scaled error for user-provided testing periods.
 
@@ -38,57 +40,83 @@ A wrapper function `forecast_comp` is provided that fits four models from the `f
 round(forecast_comp(tourism$M4, tests = list(1, 6, 12, 24, 1:12, 1:24), plot = TRUE), 2)
 ```
 
-```
-Error in forecast_comp(tourism$M4, tests = list(1, 6, 12, 24, 1:12, 1:24), : object 'MAPE' not found
-```
-
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+
+```
+          1     6    12    24  1-12  1-24
+ARIMA  0.12 11.43 17.33 21.86 13.34 15.87
+ETS    4.88 15.53  7.45 15.44  8.15  8.68
+Theta  1.39  1.39  6.38 13.50  5.41  7.36
+Naive 27.86  1.72  7.31 15.31 11.24 14.64
+ARIMA  0.01  1.04  2.47  3.40  1.58  2.00
+ETS    0.57  1.41  1.06  2.40  0.86  1.04
+Theta  0.16  0.13  0.91  2.10  0.61  0.92
+Naive  3.23  0.16  1.04  2.38  1.34  1.84
+```
 
 This method will also work with the data from the `Mcomp` package:
 
 
 ```r
 library(Mcomp)
+```
+
+```
+Loading required package: tseries
+```
+
+```
+
+    'tseries' version: 0.10-35
+
+    'tseries' is a package for time series analysis and
+    computational finance.
+
+    See 'library(help="tseries")' for details.
+```
+
+```
+Loading required package: forecast
+```
+
+```
+Loading required package: zoo
+```
+
+```
+
+Attaching package: 'zoo'
+```
+
+```
+The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric
+```
+
+```
+Loading required package: timeDate
+```
+
+```
+This is forecast 7.2 
+```
+
+```r
 round(forecast_comp(M3[[2000]], tests = list(1, 3, 6, 1:6), plot = FALSE), 2)
 ```
 
 ```
-Error in forecast_comp(M3[[2000]], tests = list(1, 3, 6, 1:6), plot = FALSE): object 'MAPE' not found
+          1     3    6   1-6
+ARIMA  5.14 17.55 2.31  8.75
+ETS    5.08 31.45 7.31 15.35
+Theta  5.12 31.58 7.50 15.47
+Naive 24.53 25.88 6.69 19.81
+ARIMA  0.19  0.53 0.09  0.29
+ETS    0.19  0.95 0.27  0.51
+Theta  0.19  0.95 0.28  0.51
+Naive  0.93  0.78 0.25  0.68
 ```
 
 An extended example in `/r/extended-example/reproduce.R` aims to show how this can be used efficiently to reproduce some of the results in Athanasopoulos but currently fails to come up with the same results.
-
-A CRAN release will follow when discrepancies with published results are better understood.  In addition to the problem noted above, currently the package build fails its testing suite which expects the reported series lengths to be the same as those in Athanasopoulos et al.  The training subsets of the data series in this package are shorter than the descriptive statistics in Table 3 of Anthanasopoulos et al.
-
-
-```r
-lengthsm <- sapply(subset(tourism, "monthly"), function(s){length(s$x)})
-lengthsq <- sapply(subset(tourism, "quarterly"), function(s){length(s$x)})
-lengthsy <- sapply(subset(tourism, "yearly"), function(s){length(s$x)})
-
-# These tests all fail unless the means are truncated (ie rounded down).
-# That is, the actual lengths are all slightly longer (on average <1)
-# than the reported lengths:
-c(mean(lengthsm), 298)
-```
-
-```
-[1] 274.5792 298.0000
-```
-
-```r
-c(mean(lengthsq), 99)
-```
-
-```
-[1] 91.63466 99.00000
-```
-
-```r
-c(mean(lengthsy), 24)
-```
-
-```
-[1] 20.4749 24.0000
-```
 

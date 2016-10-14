@@ -29,7 +29,6 @@ tourism
 The data from the tourism forecasting competition described in Athanasopoulos et al (2011)
 }
 \examples{
-library(Mcomp) # for plot and print methods
 plot(tourism$Y1)
 }
 \seealso{

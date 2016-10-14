@@ -2,5 +2,7 @@
 
 export(forecast_comp)
 import(forecast)
+importFrom(Mcomp,plot.Mdata)
+importFrom(Mcomp,subset.Mcomp)
 importFrom(graphics,lines)
 importFrom(graphics,par)

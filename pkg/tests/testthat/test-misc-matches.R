@@ -1,7 +1,6 @@
 # tests object sizes and lengths
 
 library(Tcomp)
-library(Mcomp)
 
 #-------------test number of series---------------
 expect_equal(length(tourism), 1311)

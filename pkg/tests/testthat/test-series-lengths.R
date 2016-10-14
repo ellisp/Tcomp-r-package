@@ -1,6 +1,4 @@
 library(Tcomp)
-library(Mcomp)
-library(testthat)
 
 #----------test series length versus in the Hyndman article----------
 lengthsm <- sapply(subset(tourism, "monthly"), function(s){length(s$x) + length(s$xx)})

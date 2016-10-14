@@ -1,4 +1,3 @@
-library(Mcomp)
 library(stringr)
 
 # tourism should be a list with as many elements as total series in the competition.  Each element
