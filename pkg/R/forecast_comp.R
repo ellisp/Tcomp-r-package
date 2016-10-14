@@ -38,11 +38,12 @@ forecast_comp <- function(the_series, tests = list(the_series$h), plot = FALSE, 
   }
   
   if(plot){
-    par(mfrow = c(2, 2), bty = "l", ...)
+    oldpar <- par(mfrow = c(2, 2), bty = "l", ...)
     plot(fc1, ylab = the_series$st); lines(xx, col = "red")
     plot(fc2, ylab = the_series$st); lines(xx, col = "red")  
     plot(fc3, ylab = the_series$st);lines(xx, col = "red")  
     plot(fc4, ylab = the_series$st);lines(xx, col = "red")
+    par(oldpar)
     
   }
   
