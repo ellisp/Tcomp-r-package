@@ -15,7 +15,7 @@ knit2html("README.Rmd")
 
 build_vignettes("pkg")
 build("pkg")
-devtools::install("pkg", build_vignettes = TRUE)
+install("pkg", build_vignettes = TRUE)
 
 # devtools::install_github("ellisp/Tcomp-r-package/pkg")
 # browseVignettes("Tcomp")

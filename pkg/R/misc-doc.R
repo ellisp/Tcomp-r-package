@@ -3,10 +3,12 @@
 #'  
 #' Tourism competition data
 #'
-#' The data from the tourism forecasting competition described in Athanasopoulos et al (2011)
+#' The data from the tourism forecasting competition described
+#' in George Athanasopolous, Rob J. Hyndman, Haiyan Song, Doris C. Wu (2011) 
+#' ``The tourism forecasting competition'', \emph{International Journal of Forecasting} 27 (2011) 822-844.
 #' 
 #' @format A list of 1311 series, of class \code{Mcomp}.  Each series within \code{tourism} is of 
-#' class \code{Mdata} with the following structure
+#' class \code{Mdata} with the following structure:
 #'    \describe{
 #' \item{sn}{Name of the series}
 #' \item{st}{Series number and period. For example "Y1" denotes
@@ -41,7 +43,7 @@
 #' See Vignette for details,
 #' including the code required to re-create the `Tcomp_reproduction` object.
 #' 
-#' @format {A list of three elements named "monthly", "quarterly and "yearly".   
+#' @format {A list of three elements named \code{monthly}, \code{quarterly} and \code{yearly}.   
 #' These correspond to tables 4, 5 and 6 in the Athanasopoulos et al 2011 article.  
 #' }
 #' @source \url{http://robjhyndman.com/papers/the-tourism-forecasting-competition}
@@ -53,12 +55,14 @@
 #' Tcomp: Data from the Tourism Forecasting competition
 #'
 #' The Tcomp package provides data from the tourism forecasting competition described
-#' in George. Athanasopolous, Rob J. Hyndman, Haiyan Song, Doris C. Wu (2011) The tourism forecasting competition, International Journal of Forecasting 27 (2011) 822-844.
+#' in George Athanasopolous, Rob J. Hyndman, Haiyan Song, Doris C. Wu (2011) 
+#' ``The tourism forecasting competition'', \emph{International Journal of Forecasting} 27 (2011) 822-844.
 #' 
 #' 
 #' @section Tcomp data:
 #' \describe{
-#' \item{tourism}{A list of class Mdata with 1,311 time series in it, divided into training (x) and test (xx) sets. The data are subsettable with subset method from Mcomp R package by monthly, quarterly and yearly series.}
+#' \item{tourism}{A list of class Mdata with 1,311 time series in it, divided into 
+#' training (\code{x}) and test (\code{xx}) sets. The data are subsettable with subset method from Mcomp R package by monthly, quarterly and yearly series.}
 #' }
 #' @section Tcomp functions:
 #' \describe{

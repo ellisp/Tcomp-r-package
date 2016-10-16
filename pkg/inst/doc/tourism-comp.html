@@ -13,7 +13,7 @@
 <meta name="author" content="Peter Ellis" />
 
 
-<title>Analysis with the 2011 tourism forecasting competition data</title>
+<title>Analysis with the 2010 tourism forecasting competition data</title>
 
 
 
@@ -67,7 +67,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Analysis with the 2011 tourism forecasting competition data</h1>
+<h1 class="title toc-ignore">Analysis with the 2010 tourism forecasting competition data</h1>
 <h4 class="author"><em>Peter Ellis</em></h4>
 <h4 class="date"><em>October 2016</em></h4>
 
@@ -75,7 +75,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <div id="tourism-data" class="section level2">
 <h2>Tourism data</h2>
-<p>This vignette introduces the <code>Tcomp</code> R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition described in <a href="http://robjhyndman.com/papers/forecompijf.pdf">Athanasopoulos et al (2011)</a>, originally in the International Journal of Forecasting (2011) <strong>27</strong>(3), 822-844, available in full from Hyndman’s blog. Unfortunately, the explanatory variables are not available, so only univariate forecasting methods can be tested with this data collection. The data available here are the same as those used in the Kaggle competition.</p>
+<p>This vignette introduces the <code>Tcomp</code> R package, which is a convenient wrapper around the univariate versions of the data used in the Tourism Forecasting competition described in <a href="http://robjhyndman.com/papers/forecompijf.pdf">Athanasopoulos et al (2011)</a>, originally in the <em>International Journal of Forecasting (2011)</em> <strong>27</strong>(3), 822-844, available in full from Hyndman’s blog. Unfortunately, the explanatory variables are not available, so only univariate forecasting methods can be tested with this data collection. The data available here are the same as those used in the Kaggle competition.</p>
 <p>The original data are also available from <a href="http://robjhyndman.com/data/27-3-Athanasopoulos1.zip">Hyndman’s site</a>, in CSV format, and have been wrapped into the <code>Tcomp</code> package with his permission. Any errors that occurred in the wrapping process are the package author’s responsibility and if there is doubt, the R version should be checked against the CSV originals. However, testing has been pretty thorough, and further down in this vignette we successfully reproduce exactly the mean absolute percentage error of the naive forecasts that are <em>inter alia</em> reported in that 2011 article. Please report errors as issues on <a href="https://github.com/ellisp/Tcomp-r-package/issues">this package’s GitHub page</a>.</p>
 </div>
 <div id="the-data" class="section level2">
@@ -154,7 +154,7 @@ tmp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class
 <span class="kw">colnames</span>(tmp) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Monthly&quot;</span>, <span class="st">&quot;Quarterly&quot;</span>, <span class="st">&quot;Yearly&quot;</span>)
 <span class="kw">xtable</span>(tmp, <span class="dt">digits =</span> <span class="dv">1</span>)</code></pre></div>
 <!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
-<!-- Sat Oct 15 12:08:55 2016 -->
+<!-- Sun Oct 16 14:20:12 2016 -->
 <table border="1">
 <tr>
 <th>
@@ -339,7 +339,7 @@ accuracy_measures &lt;-<span class="st"> </span>function(dataobj, cond1, tests){
 <p>The code above isn’t run in the build of the vignette for reasons of time (takes a few minutes to run on my laptop, making it to intensive for a CRAN build). The results are available in the package however as a list called <code>Tcomp_reproduction</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtable</span>(Tcomp_reproduction$monthly)</code></pre></div>
 <!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
-<!-- Sat Oct 15 12:09:05 2016 -->
+<!-- Sun Oct 16 14:20:21 2016 -->
 <table border="1">
 <tr>
 <th>
@@ -712,7 +712,7 @@ MASE
 </table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtable</span>(Tcomp_reproduction$quarterly)</code></pre></div>
 <!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
-<!-- Sat Oct 15 12:09:05 2016 -->
+<!-- Sun Oct 16 14:20:21 2016 -->
 <table border="1">
 <tr>
 <th>
@@ -1031,7 +1031,7 @@ MASE
 </table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">xtable</span>(Tcomp_reproduction$yearly)</code></pre></div>
 <!-- html table generated in R 3.3.1 by xtable 1.8-2 package -->
-<!-- Sat Oct 15 12:09:05 2016 -->
+<!-- Sun Oct 16 14:20:21 2016 -->
 <table border="1">
 <tr>
 <th>

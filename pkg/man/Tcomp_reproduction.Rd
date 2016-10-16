@@ -4,7 +4,7 @@
 \name{Tcomp_reproduction}
 \alias{Tcomp_reproduction}
 \title{Reproduction of selected tourism competition results}
-\format{{A list of three elements named "monthly", "quarterly and "yearly".   
+\format{{A list of three elements named \code{monthly}, \code{quarterly} and \code{yearly}.   
 These correspond to tables 4, 5 and 6 in the Athanasopoulos et al 2011 article.  
 }}
 \source{

@@ -7,12 +7,14 @@
 \title{Tcomp: Data from the Tourism Forecasting competition}
 \description{
 The Tcomp package provides data from the tourism forecasting competition described
-in George. Athanasopolous, Rob J. Hyndman, Haiyan Song, Doris C. Wu (2011) The tourism forecasting competition, International Journal of Forecasting 27 (2011) 822-844.
+in George Athanasopolous, Rob J. Hyndman, Haiyan Song, Doris C. Wu (2011) 
+``The tourism forecasting competition'', \emph{International Journal of Forecasting} 27 (2011) 822-844.
 }
 \section{Tcomp data}{
 
 \describe{
-\item{tourism}{A list of class Mdata with 1,311 time series in it, divided into training (x) and test (xx) sets. The data are subsettable with subset method from Mcomp R package by monthly, quarterly and yearly series.}
+\item{tourism}{A list of class Mdata with 1,311 time series in it, divided into 
+training (\code{x}) and test (\code{xx}) sets. The data are subsettable with subset method from Mcomp R package by monthly, quarterly and yearly series.}
 }
 }
 

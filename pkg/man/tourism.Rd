@@ -5,7 +5,7 @@
 \alias{tourism}
 \title{Tourism competition data}
 \format{A list of 1311 series, of class \code{Mcomp}.  Each series within \code{tourism} is of 
-class \code{Mdata} with the following structure
+class \code{Mdata} with the following structure:
    \describe{
 \item{sn}{Name of the series}
 \item{st}{Series number and period. For example "Y1" denotes
@@ -26,7 +26,9 @@ first yearly series, "Q20" denotes 20th quarterly series and so on.}
 tourism
 }
 \description{
-The data from the tourism forecasting competition described in Athanasopoulos et al (2011)
+The data from the tourism forecasting competition described
+in George Athanasopolous, Rob J. Hyndman, Haiyan Song, Doris C. Wu (2011) 
+``The tourism forecasting competition'', \emph{International Journal of Forecasting} 27 (2011) 822-844.
 }
 \examples{
 plot(tourism$Y1)

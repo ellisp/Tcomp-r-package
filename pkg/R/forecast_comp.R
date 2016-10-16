@@ -4,18 +4,19 @@
 #' Four standard forecasts of a competition dataset
 #' 
 #' Applies four modelling strategies (ARIMA, ETS, Theta and naive or seasonally naive) to a dataset
-#' with class Mdata, returns MASE statistics and (optionally) a summary graphic
+#' with class \code{Mdata}, returns accuracy statistics and (optionally) a summary graphic
 #' 
 #' @export
 #' @importFrom forecast forecast accuracy auto.arima ets snaive
 #' @importFrom graphics par lines
 #' @param the_series a list of class \code{Mdata} eg from the \code{Mcomp} or \code{Tcomp} package.  Crucially, must include elements \code{x} (the training set), \code{xx} (the test set) and \code{h} (the forecast horizon)
-#' @param tests a list of the forecast horizons over which to return the MASE, passed to \code{accuracy}
+#' @param tests a list of the forecast horizons over which to return the MAPE and MASE, passed to \code{accuracy}
 #' @param plot whether or not to draw basic plot of the four forecast model
 #' @param ... other parameters to pass to \code{plot.forecast()}
-#' @return a data frame of 4 rows and \code{length(tests) + 1} columns with first column as method and each other column containing the 
-#' Mean Absolute Scaled Error at the horizon indicated by the column name
-#' @details this is just a convenience function for fitting four different standard time series forecasts to an object from an 
+#' @return A data frame of eight rows and \code{length(tests) + 1} columns with first column as method and each other column containing the 
+#' Mean Absolute Percentage Error (MAPE, first four rows) and Mean Absolute Scaled Error (MASE, final four rows) at the horizon 
+#' indicated by the column name
+#' @details This is just a convenience function for fitting four different standard time series forecasts to an object from an 
 #' M competition or the tourism competition.  Mainly of interest to analysis wishing to re-produce published results or create 
 #' a benchmark against which other methods can be compared.
 #' @examples
