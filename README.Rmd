@@ -1,6 +1,8 @@
 # Tcomp R package
 Data from the 2010 Tourism Forecasting competition
 [![Travis-CI Build Status](https://travis-ci.org/ellisp/Tcomp-r-package.svg?branch=master)](https://travis-ci.org/ellisp/Tcomp-r-package)
+[![CRAN version](http://www.r-pkg.org/badges/version/Tcomp)](http://www.r-pkg.org/pkg/Tcomp)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/Tcomp)](http://www.r-pkg.org/pkg/Tcomp)
 
 This project provides an R package of convenient access to the data from the tourism forecasting competition described in [Athanasopoulos, Hyndman, Song and Wu (2011)](http://robjhyndman.com/papers/the-tourism-forecasting-competition/). Athanasopoulos et al was originally published in [International Journal of Forecastsing](http://www.forecasters.org/ijf) (2011) 27(3), 822-84.
 
