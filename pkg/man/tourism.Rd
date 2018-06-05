@@ -37,4 +37,3 @@ plot(tourism$Y1)
 \code{\link[Mcomp]{subset.Mcomp}}, \code{\link[Mcomp]{plot.Mdata}}
 }
 \keyword{datasets}
-

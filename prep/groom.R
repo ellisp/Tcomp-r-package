@@ -1,4 +1,5 @@
 library(stringr)
+library(testthat)
 
 # tourism should be a list with as many elements as total series in the competition.  Each element
 # of the list should itself be a list with 6 elements resembling this, except no type, description or sn.
@@ -51,7 +52,9 @@ for(i in 1:length(monthly_in)){
   tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, i], dataoos[3, i]), frequency = 12)
   
   tourism[[i]]$h <- dataoos[1 , i]
-  tourism[[i]]$n <- datain[i, 1]
+  n <- datain[1, i]
+  expect_equal(n, length(x))
+  tourism[[i]]$n <- n
 }
 
 #--------------quarterly data----------------
@@ -73,7 +76,9 @@ for(j in 1:length(quarterly_in)){
   tourism[[i]]$xx <- ts(xx, start = c(dataoos[2, j], dataoos[3, j]), frequency = 4)
   
   tourism[[i]]$h <- dataoos[1 , j]
-  tourism[[i]]$n <- datain[i, j]
+  n <- datain[1, j]
+  expect_equal(n, length(x))
+  tourism[[i]]$n <- n
 }
 
 #--------------annual data----------------
@@ -96,7 +101,9 @@ for(j in 1:length(yearly_in)){
   tourism[[i]]$xx <- ts(xx, start = dataoos[2, j], frequency = 1)
   
   tourism[[i]]$h <- dataoos[1 , j]
-  tourism[[i]]$n <- datain[j, 1]
+  n <- datain[1, j]
+  expect_equal(n, length(x))
+  tourism[[i]]$n <- n
 }
 
 

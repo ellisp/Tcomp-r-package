@@ -33,4 +33,3 @@ a benchmark against which other methods can be compared.
 forecast_comp(tourism$Y18, test = list(1, 2, 3, 4, 1:2, 1:4), plot = TRUE)
 forecast_comp(tourism$Q4, test = list(1, 2, 3, 4, 5, 6, 7, 8, 1:4, 1:8), plot = FALSE)
 }
-

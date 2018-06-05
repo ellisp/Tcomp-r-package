@@ -28,3 +28,8 @@ expect_equal(max(lengthsm), 333)
 expect_equal(max(lengthsq), 130)
 expect_equal(max(lengthsy), 47)
 
+
+test_that("series lengths are correct", {
+  expect_equal(sum(sapply(tourism, function(s){length(s$x) - s$n})), 0)
+  
+})
